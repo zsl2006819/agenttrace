@@ -66,7 +66,7 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold text-primary">AgentTrace Dashboard</span>
         </div>
-        <ExportReportButton />
+        <ExportReportButton records={records} />
       </div>
 
       {/* 筛选区 */}
