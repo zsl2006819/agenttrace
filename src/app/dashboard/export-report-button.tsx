@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 interface AuditEvent {
   id: string;
@@ -69,7 +69,7 @@ export function ExportReportButton({ records }: ExportReportButtonProps) {
       record.human_override ? '人工覆盖' : '正常',
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       head: [headers],
       body: data,
       startY: 25,
