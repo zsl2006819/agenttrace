@@ -35,7 +35,7 @@ interface AuditEvent {
 }
 
 export default async function DashboardPage() {
-  // 获取最新 10 条审计事件
+  // Fetch latest 10 audit events
   const { data: events, error } = await getSupabaseServer()
     .from('audit_events')
     .select('*')
@@ -43,13 +43,13 @@ export default async function DashboardPage() {
     .limit(10);
 
   if (error) {
-    console.error('获取审计事件失败:', error);
+    console.error('Failed to fetch audit events:', error);
   }
 
   const records: AuditEvent[] = (events ?? []) as AuditEvent[];
 
   const formatTime = (isoString: string): string => {
-    return new Date(isoString).toLocaleString('zh-CN', {
+    return new Date(isoString).toLocaleString('en-US', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -61,7 +61,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background p-6">
-      {/* 顶部栏 */}
+      {/* Top bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold text-primary">AgentTrace Dashboard</span>
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
         <ExportReportButton records={records} />
       </div>
 
-      {/* 筛选区 */}
+      {/* Filters */}
       <Card className="mb-6">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4 items-end">
@@ -77,22 +77,22 @@ export default async function DashboardPage() {
               <label className="block text-sm font-medium text-muted-foreground mb-1">
                 Agent ID
               </label>
-              <Input placeholder="输入 Agent ID" />
+              <Input placeholder="Enter Agent ID" />
             </div>
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-muted-foreground mb-1">
                 Tool Name
               </label>
-              <Input placeholder="输入 Tool Name" />
+              <Input placeholder="Enter Tool Name" />
             </div>
             <Button className="h-10">
-              查询
+              Search
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* 数据表格 */}
+      {/* Data Table */}
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-24">Event ID</TableHead>
-                  <TableHead className="w-48">Time</TableHead>
+                  <TableHead className="w-48">Timestamp</TableHead>
                   <TableHead>Agent ID</TableHead>
                   <TableHead>Tool Name</TableHead>
                   <TableHead className="w-20">Sequence</TableHead>
@@ -127,7 +127,7 @@ export default async function DashboardPage() {
                 {records.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center text-muted-foreground py-4">
-                      暂无审计记录
+                      No audit records found
                     </TableCell>
                   </TableRow>
                 )}
@@ -137,7 +137,7 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
 
-      {/* 免责声明 */}
+      {/* Disclaimer */}
       <p className="mt-8 text-xs text-muted-foreground text-center">
         AgentTrace provides technical infrastructure only and does not constitute formal legal advice.
       </p>
