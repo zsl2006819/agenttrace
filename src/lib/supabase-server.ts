@@ -1,48 +1,73 @@
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-let cachedClient: SupabaseClient | null = null;
+let serviceRoleClient: SupabaseClient | null = null;
 
 /**
- * 获取 Supabase Service Role 客户端（服务端专用，惰性初始化）。
- * 使用 Service Role 密钥绕过 RLS，用于读取/写入审计事件。
+ * 创建 Service Role 客户端（用于写入审计事件、绕过 RLS）
+ * 这是给 AI Agent 服务端调用用的，不使用用户会话
  */
-export function getSupabaseServer(): SupabaseClient {
-  if (cachedClient) return cachedClient;
+export function createSupabaseServiceRole(): SupabaseClient {
+  if (serviceRoleClient) return serviceRoleClient;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl) {
-    throw new Error('缺少环境变量 NEXT_PUBLIC_SUPABASE_URL');
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
   }
   if (!supabaseServiceRoleKey) {
-    throw new Error('缺少环境变量 SUPABASE_SERVICE_ROLE_KEY');
-  }
-  // 校验密钥是否为占位符，避免出现难以理解的 ByteString 报错
-  if (
-    supabaseServiceRoleKey.includes('替换') ||
-    supabaseServiceRoleKey.includes('这里') ||
-    supabaseServiceRoleKey.length < 20
-  ) {
-    throw new Error(
-      'SUPABASE_SERVICE_ROLE_KEY 仍是占位符，请填入 Supabase 控制台 ' +
-        'Project Settings > API 中的真实密钥（sb_secret_... 或 eyJ... 开头）'
-    );
+    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY');
   }
 
-  cachedClient = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  serviceRoleClient = createClient(supabaseUrl, supabaseServiceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
     },
   });
 
-  return cachedClient;
+  return serviceRoleClient;
 }
 
-/** @deprecated 使用 getSupabaseServer() 以便错误可被捕获 */
-export const supabaseServer = new Proxy({} as SupabaseClient, {
-  get(_target, prop) {
-    return (getSupabaseServer() as unknown as Record<string | symbol, unknown>)[prop];
-  },
-});
+/**
+ * 创建带有用户会话的 Supabase 客户端（用于 RLS 生效的查询）
+ * 这个客户端会使用用户的 access token，而不是 service role key
+ */
+export function createSupabaseServerWithAuth() {
+  const cookieStore = cookies();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch {
+            // Server Component 中无法设置 cookie，忽略
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch {
+            // Server Component 中无法设置 cookie，忽略
+          }
+        },
+      },
+    }
+  );
+}
+
+/**
+ * 向后兼容：返回 service role 客户端
+ */
+export function getSupabaseServer(): SupabaseClient {
+  return createSupabaseServiceRole();
+}

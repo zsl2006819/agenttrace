@@ -1,6 +1,6 @@
 import canonicalize from 'canonicalize';
 import { sha256 } from '@noble/hashes/sha256';
-import { bytesToHex } from '@noble/hashes/utils';
+import { bytesToHex, randomBytes } from '@noble/hashes/utils';
 
 /**
  * 使用 JCS (canonicalize) 规范化 JSON，然后计算 SHA-256 哈希。
@@ -10,6 +10,22 @@ export function computeHash(record: object): string {
   const canonicalJson = canonicalize(record);
   const hashBytes = sha256(new TextEncoder().encode(canonicalJson));
   return bytesToHex(hashBytes);
+}
+
+/**
+ * 生成一个新的 API Key 明文。格式：at_live_<48 hex chars>
+ * 该明文仅在创建时返回给用户一次，数据库中只存其哈希。
+ */
+export function generateApiKey(): string {
+  return 'at_live_' + bytesToHex(randomBytes(24));
+}
+
+/**
+ * 对 API Key 明文做 SHA-256，返回十六进制字符串。
+ * 用于在数据库中存储 key_hash，供后续比对。
+ */
+export function hashApiKey(key: string): string {
+  return bytesToHex(sha256(new TextEncoder().encode(key)));
 }
 
 /**

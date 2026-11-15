@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseServer } from '@/lib/supabase-server';
+import { createSupabaseServerWithAuth } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET() {
-  const supabase = getSupabaseServer();
+  const supabase = createSupabaseServerWithAuth();
+
+  // Get current user - RLS will filter by tenant_id
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { data: events, error } = await supabase
     .from('audit_events')
     .select('*')

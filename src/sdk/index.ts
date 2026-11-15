@@ -1,10 +1,14 @@
-import { computeHash } from '../lib/crypto';
+﻿import { computeHash } from '../lib/crypto';
 
 export interface AuditRecorderConfig {
-  endpoint: string;
-  tenantId: string;
-  agentId: string;
-  sessionId: string;
+  /** Secret API key created in the AgentTrace dashboard. */
+  apiKey: string;
+  /** Audit endpoint. Defaults to a local dev server. */
+  endpoint?: string;
+  /** Resolved server-side from the API key; only needed to override. */
+  tenantId?: string;
+  agentId?: string;
+  sessionId?: string;
 }
 
 export interface AuditRecordInput {
@@ -21,19 +25,32 @@ export interface AuditRecordInput {
   key_id?: string | null;
 }
 
+const DEFAULT_ENDPOINT = 'http://localhost:3000/api/audit';
+
+function randomId(): string {
+  const c = (globalThis as any).crypto;
+  if (c && typeof c.randomUUID === 'function') return c.randomUUID();
+  return 'id_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
 export class AuditRecorder {
   private endpoint: string;
+  private apiKey: string;
   private tenantId: string;
   private agentId: string;
   private sessionId: string;
   private prevHash: string;
   private sequenceCounter: number;
 
+  /** The most recent HTTP response from the audit endpoint. */
+  public lastResponse: Response | null = null;
+
   constructor(config: AuditRecorderConfig) {
-    this.endpoint = config.endpoint;
-    this.tenantId = config.tenantId;
-    this.agentId = config.agentId;
-    this.sessionId = config.sessionId;
+    this.endpoint = config.endpoint ?? DEFAULT_ENDPOINT;
+    this.apiKey = config.apiKey;
+    this.tenantId = config.tenantId ?? '';
+    this.agentId = config.agentId ?? 'default-agent';
+    this.sessionId = config.sessionId ?? randomId();
     // 初始 prev_hash 使用 64 个 0
     this.prevHash = '0'.repeat(64);
     this.sequenceCounter = 1;
@@ -52,7 +69,7 @@ export class AuditRecorder {
     handler: (args: TArgs) => Promise<TResult>
   ): Promise<TResult> {
     const sequence = this.sequenceCounter++;
-    const idempotency_key = crypto.randomUUID();
+    const idempotency_key = randomId();
 
     // 计算 input_hash：对 args 进行 JCS 规范化并 SHA-256
     const input_hash = computeHash({ args });
@@ -97,8 +114,8 @@ export class AuditRecorder {
       // 更新内存中的 prev_hash 为本次的 current_hash，供下一条使用
       this.prevHash = current_hash;
 
-      // POST 到审计 API（不阻塞主流程，错误仅记录）
-      void this.sendAuditRecord(record);
+      // 上报审计记录（等待结果，便于调用方确认写入成功）
+      await this.sendAuditRecord(record);
     }
 
     return result;
@@ -110,20 +127,22 @@ export class AuditRecorder {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
-          tenant_id: this.tenantId,
           agent_id: this.agentId,
           session_id: this.sessionId,
           ...record,
         }),
       });
 
+      this.lastResponse = response;
+
       if (!response.ok) {
-        console.warn('审计记录上报失败:', response.status, await response.text());
+        console.warn('Audit record rejected:', response.status, await response.text());
       }
     } catch (err: unknown) {
-      console.warn('审计记录上报异常:', err);
+      console.warn('Audit record failed to send:', err);
     }
   }
 }

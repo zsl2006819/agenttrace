@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseServer } from '@/lib/supabase-server';
+import { hashApiKey } from '@/lib/crypto';
 
 export const dynamic = 'force-dynamic';
 
 const REQUIRED_FIELDS = [
-  'tenant_id',
   'agent_id',
   'session_id',
   'sequence',
@@ -15,18 +15,71 @@ const REQUIRED_FIELDS = [
   'current_hash',
 ];
 
+function extractBearerToken(request: NextRequest): string | null {
+  const header =
+    request.headers.get('authorization') ?? request.headers.get('Authorization');
+  if (!header) return null;
+  const match = /^Bearer\s+(.+)$/i.exec(header.trim());
+  return match ? match[1].trim() : null;
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // 1) 解析 Bearer API Key
+    const token = extractBearerToken(request);
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Missing Authorization: Bearer <api_key>' },
+        { status: 401 }
+      );
+    }
+
+    const service = getSupabaseServer();
+    const keyHash = hashApiKey(token);
+
+    // 2) 用 key 的哈希查找对应的 api_keys 记录（未撤销）
+    const { data: keyRows, error: keyError } = await service
+      .from('api_keys')
+      .select('id, tenant_id, revoked_at')
+      .eq('key_hash', keyHash)
+      .is('revoked_at', null)
+      .limit(1);
+
+    if (keyError) {
+      console.error('Failed to look up API key:', keyError);
+      return NextResponse.json(
+        { error: 'Failed to authenticate API key', details: keyError.message },
+        { status: 500 }
+      );
+    }
+
+    const apiKeyRecord = keyRows?.[0];
+    if (!apiKeyRecord) {
+      return NextResponse.json(
+        { error: 'Invalid or revoked API key' },
+        { status: 401 }
+      );
+    }
+
+    // tenant_id 由 API Key 决定，忽略请求体中的任何 tenant_id（防越权）
+    const tenantId = apiKeyRecord.tenant_id as string;
+
+    // 更新最后使用时间（不阻塞主流程）
+    void service
+      .from('api_keys')
+      .update({ last_used_at: new Date().toISOString() })
+      .eq('id', apiKeyRecord.id);
+
+    // 3) 解析并校验请求体
     const body = await request.json();
 
-    // 校验必填字段
     const missingFields = REQUIRED_FIELDS.filter(
       (field) => body[field] === undefined || body[field] === null
     );
     if (missingFields.length > 0) {
       return NextResponse.json(
         {
-          error: '缺少必填字段',
+          error: 'Missing required fields',
           missing_fields: missingFields,
         },
         { status: 400 }
@@ -34,7 +87,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const {
-      tenant_id,
       agent_id,
       session_id,
       sequence,
@@ -47,21 +99,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       prev_hash,
       current_hash,
       signature,
-      key_id,
     } = body;
 
-    // 幂等检查：如果 idempotency_key 已存在，返回已存在的记录
-    const { data: existingRecord, error: selectError } = await getSupabaseServer()
+    // 4) 幂等检查
+    const { data: existingRecord, error: selectError } = await service
       .from('audit_events')
       .select('*')
-      .eq('tenant_id', tenant_id)
+      .eq('tenant_id', tenantId)
       .eq('idempotency_key', idempotency_key)
       .maybeSingle();
 
     if (selectError) {
-      console.error('查询幂等键失败:', selectError);
+      console.error('Failed to query idempotency key:', selectError);
       return NextResponse.json(
-        { error: '查询幂等键失败', details: selectError.message },
+        { error: 'Failed to query idempotency key', details: selectError.message },
         { status: 500 }
       );
     }
@@ -69,19 +120,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (existingRecord) {
       return NextResponse.json(
         {
-          message: '幂等键已存在，返回已存在的记录',
+          message: 'Idempotency key already exists; returning the existing record',
           record: existingRecord,
         },
         { status: 200 }
       );
     }
 
-    // 插入新记录
-    const { data: insertedRecord, error: insertError } = await getSupabaseServer()
+    // 5) 写入审计记录（tenant_id / key_id 以服务端解析结果为准）
+    const { data: insertedRecord, error: insertError } = await service
       .from('audit_events')
       .insert([
         {
-          tenant_id,
+          tenant_id: tenantId,
           agent_id,
           session_id,
           sequence,
@@ -94,7 +145,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           prev_hash,
           current_hash,
           signature: signature ?? null,
-          key_id: key_id ?? null,
+          key_id: apiKeyRecord.id as string,
         },
       ])
       .select()
@@ -108,17 +159,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         insertError.message?.includes('duplicate')
       ) {
         // 尝试再次查询返回已存在记录（防并发场景）
-        const { data: retryRecord, error: retryError } = await getSupabaseServer()
+        const { data: retryRecord, error: retryError } = await service
           .from('audit_events')
           .select('*')
-          .eq('tenant_id', tenant_id)
+          .eq('tenant_id', tenantId)
           .eq('idempotency_key', idempotency_key)
           .maybeSingle();
 
         if (retryError || !retryRecord) {
           return NextResponse.json(
             {
-              error: '唯一约束冲突，记录可能已由并发请求写入',
+              error: 'Unique constraint conflict; the record may have been written by a concurrent request',
               details: insertError.message,
             },
             { status: 409 }
@@ -127,32 +178,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         return NextResponse.json(
           {
-            message: '幂等键已存在（并发重试后找到），返回已存在的记录',
+            message: 'Idempotency key already exists (found after concurrent retry); returning the existing record',
             record: retryRecord,
           },
           { status: 200 }
         );
       }
 
-      console.error('插入审计记录失败:', insertError);
+      console.error('Failed to insert audit record:', insertError);
       return NextResponse.json(
-        { error: '插入审计记录失败', details: insertError.message },
+        { error: 'Failed to insert audit record', details: insertError.message },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
       {
-        message: '审计记录创建成功',
+        message: 'Audit record created',
         record: insertedRecord,
       },
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error('API 处理异常:', error);
-    const message = error instanceof Error ? error.message : '未知错误';
+    console.error('API handler error:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: '服务器内部错误', details: message },
+      { error: 'Internal server error', details: message },
       { status: 500 }
     );
   }

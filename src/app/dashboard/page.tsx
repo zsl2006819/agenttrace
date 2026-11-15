@@ -1,4 +1,5 @@
-import { getSupabaseServer } from '@/lib/supabase-server';
+import { createSupabaseServerWithAuth } from '@/lib/supabase-server';
+import { redirect } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -7,11 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { ExportReportButton } from './export-report-button';
+import { AuditEmptyState } from './empty-state';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,9 +36,32 @@ interface AuditEvent {
   created_at: string;
 }
 
+const formatTime = (isoString: string): string => {
+  return new Date(isoString).toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+};
+
 export default async function DashboardPage() {
-  // Fetch latest 10 audit events
-  const { data: events, error } = await getSupabaseServer()
+  const supabase = createSupabaseServerWithAuth();
+
+  // Get current user session
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    redirect('/login?redirect=/dashboard');
+  }
+
+  // Fetch latest 10 audit events for this user's tenant (RLS will filter by tenant_id)
+  const { data: events, error } = await supabase
     .from('audit_events')
     .select('*')
     .order('created_at', { ascending: false })
@@ -48,23 +73,15 @@ export default async function DashboardPage() {
 
   const records: AuditEvent[] = (events ?? []) as AuditEvent[];
 
-  const formatTime = (isoString: string): string => {
-    return new Date(isoString).toLocaleString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-background p-6">
-      {/* Top bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-primary">AgentTrace Dashboard</span>
+    <div className="mx-auto max-w-6xl px-6 py-8 md:px-8">
+      {/* Header */}
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">Audit Logs</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            A tamper-evident record of every tool call made by your agents.
+          </p>
         </div>
         <ExportReportButton records={records} />
       </div>
@@ -72,74 +89,71 @@ export default async function DashboardPage() {
       {/* Filters */}
       <Card className="mb-6">
         <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-muted-foreground mb-1">
+          <div className="flex flex-col items-end gap-4 md:flex-row">
+            <div className="w-full flex-1 md:min-w-[200px]">
+              <label className="mb-1 block text-sm font-medium text-muted-foreground">
                 Agent ID
               </label>
               <Input placeholder="Enter Agent ID" />
             </div>
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-muted-foreground mb-1">
+            <div className="w-full flex-1 md:min-w-[200px]">
+              <label className="mb-1 block text-sm font-medium text-muted-foreground">
                 Tool Name
               </label>
               <Input placeholder="Enter Tool Name" />
             </div>
-            <Button className="h-10">
-              Search
-            </Button>
+            <Button className="h-10">Search</Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Data Table */}
+      {/* Data Table or Empty State */}
       <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-24">Event ID</TableHead>
-                  <TableHead className="w-48">Timestamp</TableHead>
-                  <TableHead>Agent ID</TableHead>
-                  <TableHead>Tool Name</TableHead>
-                  <TableHead className="w-20">Sequence</TableHead>
-                  <TableHead className="w-32">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {records.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>
-                      {record.id.substring(0, 8)}...
-                    </TableCell>
-                    <TableCell>{formatTime(record.created_at)}</TableCell>
-                    <TableCell>{record.agent_id}</TableCell>
-                    <TableCell>{record.tool_name}</TableCell>
-                    <TableCell>{record.sequence}</TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
-                        Verified
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {records.length === 0 && (
+        {records.length === 0 ? (
+          <AuditEmptyState />
+        ) : (
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground py-4">
-                      No audit records found
-                    </TableCell>
+                    <TableHead className="w-24">Event ID</TableHead>
+                    <TableHead className="w-48">Timestamp</TableHead>
+                    <TableHead>Agent ID</TableHead>
+                    <TableHead>Tool Name</TableHead>
+                    <TableHead className="w-20">Sequence</TableHead>
+                    <TableHead className="w-32">Status</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
+                </TableHeader>
+                <TableBody>
+                  {records.map((record) => (
+                    <TableRow key={record.id}>
+                      <TableCell>{record.id.substring(0, 8)}...</TableCell>
+                      <TableCell>{formatTime(record.created_at)}</TableCell>
+                      <TableCell>{record.agent_id}</TableCell>
+                      <TableCell>{record.tool_name}</TableCell>
+                      <TableCell>{record.sequence}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="default"
+                          className="border-green-200 bg-green-100 text-green-800"
+                        >
+                          Verified
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        )}
       </Card>
 
       {/* Disclaimer */}
-      <p className="mt-8 text-xs text-muted-foreground text-center">
-        AgentTrace provides technical infrastructure only and does not constitute formal legal advice.
+      <p className="mt-8 text-center text-xs text-muted-foreground">
+        AgentTrace provides technical infrastructure only and does not constitute
+        formal legal advice.
       </p>
     </div>
   );
