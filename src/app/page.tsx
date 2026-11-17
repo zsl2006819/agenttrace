@@ -21,6 +21,9 @@ export default function Home() {
                 <Link href="#compliance" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
                   Compliance
                 </Link>
+                <Link href="/docs" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
+                  Docs
+                </Link>
               </div>
             </div>
             <div className="flex items-center gap-4">

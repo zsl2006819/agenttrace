@@ -30,7 +30,8 @@ function loadEnvLocal(): void {
 
 loadEnvLocal();
 
-const PORT = process.env.AUDIT_API_PORT ?? '3000';
+const AUDIT_API_URL =
+  process.env.AUDIT_API_URL ?? 'https://agenttrace-eta.vercel.app/api/audit';
 const API_KEY = process.env.AGENTTRACE_API_KEY ?? '';
 
 if (!API_KEY) {
@@ -42,7 +43,7 @@ if (!API_KEY) {
 
 async function main() {
   const recorder = new AuditRecorder({
-    endpoint: `http://localhost:${PORT}/api/audit`,
+    endpoint: AUDIT_API_URL,
     apiKey: API_KEY,
     agentId: 'agent-demo',
     sessionId: `session-demo-${Date.now()}`,
