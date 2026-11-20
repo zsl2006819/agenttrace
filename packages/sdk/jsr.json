@@ -1,0 +1,5 @@
+{
+  "name": "@zsl2006819/agenttrace-sdk",
+  "version": "0.1.1",
+  "exports": "./src/index.ts"
+}
