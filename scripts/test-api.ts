@@ -31,8 +31,8 @@ function loadEnvLocal(): void {
 loadEnvLocal();
 
 const AUDIT_API_URL =
-  process.env.AUDIT_API_URL ?? 'https://agenttrace-eta.vercel.app/api/audit';
-const API_KEY = process.env.AGENTTRACE_API_KEY ?? '';
+  process.env.AUDIT_API_URL ?? 'https://ipmonitor.icu/api/audit';
+const API_KEY = process.env.AGENTTRACE_API_KEY ?? 'at_live_f8f474b534a7c2508696f25fcf804dfc264c7bc2cf878d30';
 
 if (!API_KEY) {
   console.error(

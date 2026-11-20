@@ -86,6 +86,54 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    // 2.5) 额度检查：查 profiles 表获取 api_limit，再查本月已使用量
+    const { data: profile, error: profileError } = await service
+      .from('profiles')
+      .select('id, plan, api_limit')
+      .eq('tenant_id', tenantId)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error('Failed to look up profile for quota check:', profileError);
+      return NextResponse.json(
+        { error: 'Failed to look up profile', details: profileError.message },
+        { status: 500 }
+      );
+    }
+
+    const apiLimit = (profile?.api_limit as number | null) ?? 10_000;
+
+    // 统计本月已写入的审计记录数（按 tenant_id 过滤，按 created_at >= 本月 1 号）
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+
+    const { count: usedCount, error: countError } = await service
+      .from('audit_events')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .gte('created_at', monthStart.toISOString());
+
+    if (countError) {
+      console.error('Failed to count audit events for quota check:', countError);
+      return NextResponse.json(
+        { error: 'Failed to count audit events', details: countError.message },
+        { status: 500 }
+      );
+    }
+
+    if (usedCount !== null && usedCount >= apiLimit) {
+      return NextResponse.json(
+        {
+          error: 'Quota exceeded. Please upgrade your plan.',
+          plan: profile?.plan ?? 'free',
+          api_limit: apiLimit,
+          used_this_month: usedCount,
+        },
+        { status: 429 }
+      );
+    }
+
     const {
       agent_id,
       session_id,

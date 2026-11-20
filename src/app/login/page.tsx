@@ -78,7 +78,7 @@ function LoginForm() {
     }
   };
 
-  const handleOAuth = async (provider: 'github' | 'google') => {
+  const handleOAuth = async (provider: 'github') => {
     setIsLoading(true);
     setError(null);
     try {
