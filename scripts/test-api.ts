@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { AuditRecorder } from '../src/sdk';
+import { AuditRecorder } from '@agenttrace/sdk';
 
 /**
  * Load AGENTTRACE_API_KEY from .env.local (git-ignored).
@@ -49,12 +49,10 @@ async function main() {
     sessionId: `session-demo-${Date.now()}`,
   });
 
-  console.log('→ Calling wrapped tool: get_weather');
-
   const result = await recorder.wrap(
     'get_weather',
     { city: 'Paris' },
-    async (args) => {
+    async (args: { city: string }) => {
       console.log('  executing tool with args:', args);
       return { temperature: 22, condition: 'sunny', unit: 'celsius' };
     }

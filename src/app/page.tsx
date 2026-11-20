@@ -258,7 +258,7 @@ export default function Home() {
                 </li>
               </ul>
               <Link
-                href="/dashboard"
+                href="/login"
                 className="w-full px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-center"
               >
                 Start Free
@@ -300,12 +300,14 @@ export default function Home() {
                   3 team members
                 </li>
               </ul>
-              <Link
-                href="/dashboard"
+              <a
+                href="https://www.creem.io/product/prod_1cTrjVUKMUB8QUPb8R17CI"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors text-center shadow-lg"
               >
                 Get Started
-              </Link>
+              </a>
             </div>
 
             {/* Business Plan */}
@@ -344,12 +346,14 @@ export default function Home() {
                   Unlimited team members
                 </li>
               </ul>
-              <Link
-                href="/dashboard"
+              <a
+                href="https://www.creem.io/product/prod_6sMnWEQOoPzwUlBU3LyBL"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-center"
               >
                 Contact Sales
-              </Link>
+              </a>
             </div>
           </div>
         </div>

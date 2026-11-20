@@ -2,6 +2,9 @@
   "name": "agenttrace",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/sdk"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,6 +12,7 @@
     "test:tamper": "tsx scripts/test-tamper.ts"
   },
   "dependencies": {
+    "@creem_io/nextjs": "^0.6.5",
     "@noble/hashes": "^1.7.0",
     "@radix-ui/react-separator": "^1.2.0",
     "@radix-ui/react-slot": "^1.5.0",
