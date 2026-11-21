@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -20,6 +21,7 @@ interface AuditEvent {
 
 interface ExportReportButtonProps {
   records: AuditEvent[];
+  plan?: string;
 }
 
 const formatTime = (isoString: string): string => {
@@ -33,12 +35,40 @@ const formatTime = (isoString: string): string => {
   });
 };
 
-export function ExportReportButton({ records }: ExportReportButtonProps) {
+/**
+ * Free plan users are blocked from exporting compliance reports.
+ * This is enforced both at the UI level (alert) and server level (route).
+ */
+function isExportBlocked(plan?: string): boolean {
+  return !plan || plan === 'free';
+}
+
+export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
+  const [blocked, setBlocked] = useState(false);
+
+  const showPaywall = () => {
+    if (blocked) return;
+    setBlocked(true);
+    alert(
+      'Upgrade to Starter or Business plan to export compliance reports.\n\n' +
+        'Starter: $79/month — 500k events, PDF exports, digital signatures\n' +
+        'Business: $149/month — unlimited events, custom retention, SSO'
+    );
+  };
+
   const downloadJSONL = () => {
+    if (isExportBlocked(plan)) {
+      showPaywall();
+      return;
+    }
     window.location.href = '/api/report/jsonl';
   };
 
   const downloadPDF = () => {
+    if (isExportBlocked(plan)) {
+      showPaywall();
+      return;
+    }
     if (records.length === 0) {
       alert('No data to export');
       return;
@@ -106,10 +136,22 @@ export function ExportReportButton({ records }: ExportReportButtonProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" onClick={downloadJSONL}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={downloadJSONL}
+        disabled={isExportBlocked(plan)}
+        className={isExportBlocked(plan) ? 'opacity-50 cursor-not-allowed' : ''}
+      >
         Export JSONL
       </Button>
-      <Button variant="outline" size="sm" onClick={downloadPDF}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={downloadPDF}
+        disabled={isExportBlocked(plan)}
+        className={isExportBlocked(plan) ? 'opacity-50 cursor-not-allowed' : ''}
+      >
         Export PDF
       </Button>
     </div>

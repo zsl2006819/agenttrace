@@ -301,7 +301,7 @@ export default function Home() {
                 </li>
               </ul>
               <a
-                href="https://www.creem.io/payment/prod_1cTrjVUKMUB8QUPb8R17CI"
+                href="https://www.creem.io/payment/prod_1CtRjvUKMUB8QUPb8R17CI"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors text-center shadow-lg"
@@ -347,7 +347,7 @@ export default function Home() {
                 </li>
               </ul>
               <a
-                href="https://www.creem.io/payment/prod_6sMnWEQOoPzwUlBU3LyBL"
+                href="https://www.creem.io/payment/prod_6sMrMJEQOoPzwUlBU3LyBL"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-center"
