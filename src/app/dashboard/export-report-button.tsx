@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -44,6 +45,7 @@ function isExportBlocked(plan?: string): boolean {
 }
 
 export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
+  const router = useRouter();
   const [blocked, setBlocked] = useState(false);
 
   const showPaywall = () => {
@@ -56,9 +58,19 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
     );
   };
 
+  /**
+   * If the plan prop is stale (e.g. the webhook upgraded us a second ago),
+   * re-fetch the server components so the buttons unlock without a manual
+   * page reload.
+   */
+  const handleLockedClick = () => {
+    showPaywall();
+    router.refresh();
+  };
+
   const downloadJSONL = () => {
     if (isExportBlocked(plan)) {
-      showPaywall();
+      handleLockedClick();
       return;
     }
     window.location.href = '/api/report/jsonl';
@@ -66,7 +78,7 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
 
   const downloadPDF = () => {
     if (isExportBlocked(plan)) {
-      showPaywall();
+      handleLockedClick();
       return;
     }
     if (records.length === 0) {
@@ -140,8 +152,9 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
         variant="outline"
         size="sm"
         onClick={downloadJSONL}
-        disabled={isExportBlocked(plan)}
-        className={isExportBlocked(plan) ? 'opacity-50 cursor-not-allowed' : ''}
+        aria-disabled={isExportBlocked(plan)}
+        title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
+        className={isExportBlocked(plan) ? 'opacity-60' : ''}
       >
         Export JSONL
       </Button>
@@ -149,8 +162,9 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
         variant="outline"
         size="sm"
         onClick={downloadPDF}
-        disabled={isExportBlocked(plan)}
-        className={isExportBlocked(plan) ? 'opacity-50 cursor-not-allowed' : ''}
+        aria-disabled={isExportBlocked(plan)}
+        title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
+        className={isExportBlocked(plan) ? 'opacity-60' : ''}
       >
         Export PDF
       </Button>

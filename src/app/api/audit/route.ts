@@ -86,7 +86,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // 2.5) 额度检查：查 profiles 表获取 api_limit，再查本月已使用量
+    const {
+      agent_id,
+      session_id,
+      sequence,
+      idempotency_key,
+      tool_name,
+      input_hash,
+      output_hash,
+      error_code,
+      human_override,
+      prev_hash,
+      current_hash,
+      signature,
+    } = body;
+
+    // 3) 幂等检查（先于额度检查：重放同一事件不算新的写入）
+    const { data: existingRecord, error: selectError } = await service
+      .from('audit_events')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .eq('idempotency_key', idempotency_key)
+      .maybeSingle();
+
+    if (selectError) {
+      console.error('Failed to query idempotency key:', selectError);
+      return NextResponse.json(
+        { error: 'Failed to query idempotency key', details: selectError.message },
+        { status: 500 }
+      );
+    }
+
+    if (existingRecord) {
+      return NextResponse.json(
+        {
+          message: 'Idempotency key already exists; returning the existing record',
+          record: existingRecord,
+        },
+        { status: 200 }
+      );
+    }
+
+    // 4) 额度检查：查 profiles 表获取 api_limit，再查本月已使用量
     const { data: profile, error: profileError } = await service
       .from('profiles')
       .select('id, plan, api_limit')
@@ -131,47 +172,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           used_this_month: usedCount,
         },
         { status: 429 }
-      );
-    }
-
-    const {
-      agent_id,
-      session_id,
-      sequence,
-      idempotency_key,
-      tool_name,
-      input_hash,
-      output_hash,
-      error_code,
-      human_override,
-      prev_hash,
-      current_hash,
-      signature,
-    } = body;
-
-    // 4) 幂等检查
-    const { data: existingRecord, error: selectError } = await service
-      .from('audit_events')
-      .select('*')
-      .eq('tenant_id', tenantId)
-      .eq('idempotency_key', idempotency_key)
-      .maybeSingle();
-
-    if (selectError) {
-      console.error('Failed to query idempotency key:', selectError);
-      return NextResponse.json(
-        { error: 'Failed to query idempotency key', details: selectError.message },
-        { status: 500 }
-      );
-    }
-
-    if (existingRecord) {
-      return NextResponse.json(
-        {
-          message: 'Idempotency key already exists; returning the existing record',
-          record: existingRecord,
-        },
-        { status: 200 }
       );
     }
 
