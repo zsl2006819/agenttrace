@@ -15,11 +15,27 @@ const PLAN_LIMITS: Record<string, number> = {
   enterprise: 10_000_000,
 };
 
+const VALID_PLANS = ['free', 'starter', 'business', 'enterprise'] as const;
+
 /**
- * Map a Creem product ID or plan name to a plan tier.
- * Extend this table when you add new pricing tiers.
+ * Resolve the plan for a delivery.
+ *
+ * The checkout route stamps the purchased plan into `metadata`, which is an
+ * exact value and immune to a product being renamed in the Creem dashboard.
+ * Product id/name matching is kept as a fallback for deliveries that predate
+ * the new checkout flow.
  */
-function resolvePlan(product: { id?: string; name?: string } | null): string {
+function resolvePlan(
+  product: { id?: string; name?: string } | null,
+  hint?: unknown
+): string {
+  if (typeof hint === 'string') {
+    const normalized = hint.toLowerCase();
+    if ((VALID_PLANS as readonly string[]).includes(normalized)) {
+      return normalized;
+    }
+  }
+
   const pid = (product?.id ?? '').toLowerCase();
   const pname = (product?.name ?? '').toLowerCase();
 
@@ -30,6 +46,21 @@ function resolvePlan(product: { id?: string; name?: string } | null): string {
 
   // Default: free tier
   return 'free';
+}
+
+/** Normalise the metadata bag attached to a delivery. */
+function readMetadata(data: {
+  metadata?: Record<string, unknown> | null;
+}): Record<string, unknown> {
+  return data.metadata ?? {};
+}
+
+/** Pull `referenceId` out of the checkout metadata. */
+function readReferenceId(data: {
+  metadata?: Record<string, unknown> | null;
+}): string | undefined {
+  const value = readMetadata(data).referenceId;
+  return typeof value === 'string' ? value : undefined;
 }
 
 /**
@@ -186,10 +217,9 @@ export const POST = Webhook({
       data.webhookEventType,
       data,
       async () => {
-        const plan = resolvePlan(data.product ?? null);
+        const plan = resolvePlan(data.product ?? null, readMetadata(data).plan);
         const email = data.customer?.email;
-        const referenceId = (data.metadata as Record<string, unknown> | undefined)
-          ?.referenceId as string | undefined;
+        const referenceId = readReferenceId(data);
 
         console.log('[Webhook] checkout.completed:', {
           webhookId: data.webhookId,
@@ -210,10 +240,9 @@ export const POST = Webhook({
       data.webhookEventType,
       data,
       async () => {
-        const plan = resolvePlan(data.product ?? null);
+        const plan = resolvePlan(data.product ?? null, readMetadata(data).plan);
         const email = data.customer?.email;
-        const referenceId = (data.metadata as Record<string, unknown> | undefined)
-          ?.referenceId as string | undefined;
+        const referenceId = readReferenceId(data);
 
         console.log('[Webhook] subscription.active:', {
           webhookId: data.webhookId,
@@ -235,8 +264,7 @@ export const POST = Webhook({
       data,
       async () => {
         const email = data.customer?.email;
-        const referenceId = (data.metadata as Record<string, unknown> | undefined)
-          ?.referenceId as string | undefined;
+        const referenceId = readReferenceId(data);
 
         console.log('[Webhook] access revoked:', {
           eventKey: revokeEventKey(data),

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PricingCheckoutButton } from '@/components/pricing-checkout-button';
 
 export default function Home() {
   return (
@@ -300,14 +301,12 @@ export default function Home() {
                   3 team members
                 </li>
               </ul>
-              <a
-                href="https://www.creem.io/payment/prod_1cTrjVUKMUB8QUPb8R17CI"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors text-center shadow-lg"
+              <PricingCheckoutButton
+                plan="starter"
+                className="w-full px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-center shadow-lg"
               >
                 Get Started
-              </a>
+              </PricingCheckoutButton>
             </div>
 
             {/* Business Plan */}
@@ -346,14 +345,12 @@ export default function Home() {
                   Unlimited team members
                 </li>
               </ul>
-              <a
-                href="https://www.creem.io/payment/prod_6sMnWEQOoPzwUlBU3LyBL"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-center"
+              <PricingCheckoutButton
+                plan="business"
+                className="w-full px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-center"
               >
-                Contact Sales
-              </a>
+                Get Started
+              </PricingCheckoutButton>
             </div>
           </div>
         </div>
