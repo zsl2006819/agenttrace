@@ -113,15 +113,15 @@ export default async function SettingsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left column */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-6 flex flex-col h-full">
           {/* Account card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900">
+          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900 h-full flex flex-col">
             <CardHeaderWithIcon
               icon={User}
               title="Account"
               description="Your personal account information."
             />
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 flex-1">
               <div className="divide-y divide-zinc-100/70 dark:divide-zinc-800/70">
                 <FieldRow label="Email" value={user.email ?? '—'} />
                 <FieldRow label="User ID" value={user.id} />
@@ -131,13 +131,13 @@ export default async function SettingsPage() {
           </Card>
 
           {/* Subscription card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900">
+          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900 h-full flex flex-col">
             <CardHeaderWithIcon
               icon={CreditCard}
               title="Subscription"
               description="Manage your plan, billing, and payment method."
             />
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 flex-1">
               <div className="divide-y divide-zinc-100/70 dark:divide-zinc-800/70">
                 <div className="flex items-center justify-between border-b border-zinc-100 pb-3 pt-2 last:border-0 dark:border-zinc-800/70">
                   <span className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -176,15 +176,15 @@ export default async function SettingsPage() {
         </div>
 
         {/* Right column */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-6 flex flex-col h-full">
           {/* Security card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900">
+          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900 h-full flex flex-col">
             <CardHeaderWithIcon
               icon={Shield}
               title="Security"
               description="Protect your account and workspace."
             />
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 flex-1">
               <div className="divide-y divide-zinc-100/70 dark:divide-zinc-800/70">
                 <TwoFactorToggle
                   label="Two-Factor Authentication"
@@ -201,7 +201,7 @@ export default async function SettingsPage() {
           </Card>
 
           {/* Danger Zone card */}
-          <Card className="overflow-hidden border border-red-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-red-900/30 dark:bg-zinc-900">
+          <Card className="overflow-hidden border border-red-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-red-900/30 dark:bg-zinc-900 h-full flex flex-col">
             <CardHeader className="pb-1">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-red-500 dark:text-red-400" />
@@ -213,7 +213,7 @@ export default async function SettingsPage() {
                 Permanent actions. Cannot be undone.
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 flex-1">
               <div className="flex items-center justify-between border-b border-zinc-100 py-3 last:border-0 dark:border-zinc-800/50">
                 <div>
                   <span className="text-sm text-zinc-900 dark:text-zinc-100">

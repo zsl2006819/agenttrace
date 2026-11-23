@@ -6,8 +6,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Link,
-  Hash,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -90,36 +88,58 @@ export function ChainIntegrityBanner() {
             </div>
           </div>
 
-          {/* Right: Hash chain SVG */}
-          <div className="w-full md:w-80">
+          {/* Right: Hash chain visualization */}
+          <div className="w-full md:w-80 relative h-16 flex items-center justify-center">
             <svg
               width="100%"
-              height="64"
-              viewBox="0 0 1000 64"
+              height="48"
+              viewBox="0 0 1000 48"
               preserveAspectRatio="none"
             >
               <defs>
                 <linearGradient id="chain-gradient" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%" stopColor="zinc-900" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="zinc-600" stopOpacity={0.7} />
+                  <stop offset="0%" stopColor="zinc-900" stopOpacity={0.8} />
+                  <stop offset="100%" stopColor="zinc-600" stopOpacity={0.5} />
                 </linearGradient>
+                <filter id="shield-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
               </defs>
 
-              {/* Connecting lines */}
-              <line x1="90" y1="32" x2="230" y2="32" stroke="zinc-200" strokeWidth={2} className="dark:stroke-zinc-800" />
-              <line x1="330" y1="32" x2="470" y2="32" stroke="zinc-200" strokeWidth={2} className="dark:stroke-zinc-800" />
-              <line x1="570" y1="32" x2="710" y2="32" stroke="zinc-200" strokeWidth={2} className="dark:stroke-zinc-800" />
+              {/* Connecting thin lines */}
+              <line x1="90" y1="24" x2="230" y2="24" stroke="zinc-200" strokeWidth={1} className="dark:stroke-zinc-800/50" />
+              <line x1="330" y1="24" x2="470" y2="24" stroke="zinc-200" strokeWidth={1} className="dark:stroke-zinc-800/50" />
+              <line x1="570" y1="24" x2="710" y2="24" stroke="zinc-200" strokeWidth={1} className="dark:stroke-zinc-800/50" />
 
               {/* Nodes */}
               {HASH_NODES.map((hash, i) => {
                 const cx = 160 + i * 240;
                 return (
                   <g key={hash}>
-                    <circle cx={cx} cy={32} r={18} fill="zinc-900" className="dark:fill-zinc-100" />
-                    <circle cx={cx} cy={32} r={22} fill="none" stroke="zinc-400" strokeWidth={1} className="dark:stroke-zinc-600" />
+                    <rect
+                      x={cx - 22}
+                      y={14}
+                      width={44}
+                      height={20}
+                      rx={6}
+                      fill="zinc-900"
+                      className="dark:fill-zinc-100"
+                    />
+                    <rect
+                      x={cx - 24}
+                      y={12}
+                      width={48}
+                      height={24}
+                      rx={8}
+                      fill="none"
+                      stroke="zinc-400"
+                      strokeWidth={1}
+                      className="dark:stroke-zinc-600/50"
+                    />
                     <text
                       x={cx}
-                      y={36}
+                      y={24}
                       fill="zinc-300"
                       fontSize="10"
                       fontFamily="monospace"
@@ -133,16 +153,19 @@ export function ChainIntegrityBanner() {
                 );
               })}
 
-              {/* Shield check at end */}
-              <circle cx="780" cy={32} r={22} fill="emerald-500" />
-              <path
-                d="M780 20 L790 28 L800 20"
-                fill="none"
-                stroke="white"
-                strokeWidth={3}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              {/* Final node: Shield Check */}
+              <g transform="translate(780, 24)">
+                <circle r={24} fill="none" stroke="emerald-500" strokeWidth={2} opacity={0.3} />
+                <circle r={20} fill="emerald-500" filter="url(#shield-glow)" />
+                <path
+                  d="M-5 -5 L2 3 L8 -5"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
             </svg>
           </div>
         </div>

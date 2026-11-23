@@ -199,13 +199,45 @@ export default async function DashboardPage() {
           </p>
         </div>
         <div className="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md hover:border-emerald-200 dark:border-emerald-900/30 dark:bg-zinc-900">
-          <div className="flex items-end gap-2">
-            <p className="text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">98</p>
-            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">/ 100</span>
+          <div className="flex items-center justify-between">
+            <div className="relative">
+              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="emerald-100"
+                  strokeWidth="8"
+                  fill="transparent"
+                  className="dark:stroke-emerald-900/30"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="emerald-600"
+                  strokeWidth="8"
+                  fill="transparent"
+                  className="dark:stroke-emerald-400"
+                  strokeDasharray="264"
+                  strokeDashoffset={5.28}
+                  strokeLinecap="round"
+                  style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400 leading-none">98</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                Trust Score
+              </p>
+              <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                Excellent
+              </p>
+            </div>
           </div>
-          <p className="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-            Trust Score — Excellent
-          </p>
         </div>
       </div>
 
