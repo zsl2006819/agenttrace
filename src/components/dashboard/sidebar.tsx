@@ -7,15 +7,17 @@ import {
   ScrollText,
   KeyRound,
   Settings,
+  ShieldAlert,
   LogOut,
-  PanelLeftClose,
-  PanelLeftOpen,
+  BookOpen,
+  ChevronsLeft,
+  ChevronsRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Audit Logs', icon: ScrollText },
+  { href: '/dashboard/security', label: 'Security', icon: ShieldAlert },
   { href: '/dashboard/api-keys', label: 'API Keys', icon: KeyRound },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
@@ -27,6 +29,15 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + '/');
 }
 
+const itemBase =
+  'flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors';
+
+const itemActive =
+  'bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100';
+
+const itemIdle =
+  'text-zinc-500 hover:bg-zinc-100/70 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-100';
+
 export function DashboardSidebar({ email }: { email: string | null }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -34,25 +45,30 @@ export function DashboardSidebar({ email }: { email: string | null }) {
   return (
     <aside
       className={cn(
-        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-border bg-card transition-[width] duration-200',
-        collapsed ? 'w-16' : 'w-64'
+        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-zinc-200/70 bg-zinc-50/60 transition-[width] duration-200 dark:border-zinc-800 dark:bg-zinc-900/40',
+        collapsed ? 'w-14' : 'w-60'
       )}
     >
-      {/* Logo */}
-      <div className="flex h-16 items-center gap-2 border-b border-border px-4">
+      {/* Brand */}
+      <div className="flex h-16 shrink-0 items-center px-3">
         <Link
           href="/dashboard"
-          className="flex min-w-0 items-center gap-2 font-semibold text-foreground"
+          className="flex min-w-0 items-center gap-2.5"
+          aria-label="AgentTrace"
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-[11px] font-semibold tracking-tight text-white dark:bg-zinc-100 dark:text-zinc-900">
             AT
           </span>
-          {!collapsed && <span className="truncate text-base">AgentTrace</span>}
+          {!collapsed && (
+            <span className="truncate text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+              AgentTrace
+            </span>
+          )}
         </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 overflow-y-auto p-2">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 py-1">
         {NAV_ITEMS.map((item) => {
           const active = isActive(pathname, item.href);
           const Icon = item.icon;
@@ -61,68 +77,69 @@ export function DashboardSidebar({ email }: { email: string | null }) {
               key={item.href}
               href={item.href}
               title={collapsed ? item.label : undefined}
-              className={cn(
-                'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                active
-                  ? 'bg-secondary text-secondary-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-              )}
+              className={cn(itemBase, active ? itemActive : itemIdle)}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
               {!collapsed && <span className="truncate">{item.label}</span>}
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer: collapse toggle, user email, sign out */}
-      <div className="border-t border-border p-2">
-        <div className="flex flex-col gap-2">
-          {!collapsed && email && (
-            <div className="px-3 py-1">
-              <p className="text-xs text-muted-foreground">Signed in as</p>
-              <p className="truncate text-sm font-medium text-foreground" title={email}>
-                {email}
-              </p>
-            </div>
-          )}
+      {/* Footer */}
+      <div className="shrink-0 border-t border-zinc-200/70 p-2 dark:border-zinc-800">
+        <div className="space-y-0.5">
+          <Link
+            href="/docs"
+            title={collapsed ? 'Documentation' : undefined}
+            className={cn(itemBase, itemIdle)}
+          >
+            <BookOpen className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+            {!collapsed && <span className="truncate">Documentation</span>}
+          </Link>
 
           <form action="/auth/signout" method="POST">
             <button
               type="submit"
               title={collapsed ? 'Sign Out' : undefined}
-              className={cn(
-                'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
-              )}
+              className={cn(itemBase, itemIdle, 'w-full text-left')}
             >
-              <LogOut className="h-4 w-4 shrink-0" />
+              <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.75} />
               {!collapsed && <span>Sign Out</span>}
             </button>
           </form>
+        </div>
 
-          <Link
-            href="/docs"
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <ScrollText className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Documentation</span>}
-          </Link>
+        {/* Account + collapse */}
+        <div className="mt-2 flex items-center gap-2 border-t border-zinc-200/70 px-1 pt-2 dark:border-zinc-800">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-semibold uppercase text-white dark:bg-zinc-100 dark:text-zinc-900">
+            {(email ?? '?').charAt(0)}
+          </span>
 
-          <Button
+          {!collapsed && email && (
+            <span
+              className="min-w-0 flex-1 truncate text-xs text-zinc-500 dark:text-zinc-400"
+              title={email}
+            >
+              {email}
+            </span>
+          )}
+
+          <button
             type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setCollapsed((v) => !v)}
-            className="w-full justify-start gap-3 px-3 text-muted-foreground"
+            onClick={() => setCollapsed((value) => !value)}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className={cn(
+              'rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
+              !collapsed && 'ml-auto'
+            )}
           >
             {collapsed ? (
-              <PanelLeftOpen className="h-4 w-4 shrink-0" />
+              <ChevronsRight className="h-3.5 w-3.5" strokeWidth={2} />
             ) : (
-              <PanelLeftClose className="h-4 w-4 shrink-0" />
+              <ChevronsLeft className="h-3.5 w-3.5" strokeWidth={2} />
             )}
-            {!collapsed && <span>Collapse</span>}
-          </Button>
+          </button>
         </div>
       </div>
     </aside>

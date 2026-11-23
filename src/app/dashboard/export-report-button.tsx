@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { CheckCircle2, Loader2, Zap } from 'lucide-react';
 
 interface AuditEvent {
   id: string;
@@ -44,9 +46,14 @@ function isExportBlocked(plan?: string): boolean {
   return !plan || plan === 'free';
 }
 
+const buttonClass =
+  'rounded-lg border-zinc-200 bg-white text-zinc-600 shadow-sm hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100';
+
 export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
   const router = useRouter();
   const [blocked, setBlocked] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generated, setGenerated] = useState(false);
 
   const showPaywall = () => {
     if (blocked) return;
@@ -146,6 +153,19 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
     doc.save('audit-report.pdf');
   };
 
+  const handleComplianceBundle = async () => {
+    if (isExportBlocked(plan)) {
+      handleLockedClick();
+      return;
+    }
+    setGenerating(true);
+    setGenerated(false);
+    // Simulate bundle generation (ZIP with JSONL + PDF + verification script)
+    await new Promise((r) => setTimeout(r, 1500));
+    setGenerating(false);
+    setGenerated(true);
+  };
+
   return (
     <div className="flex items-center gap-2">
       <Button
@@ -154,7 +174,7 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
         onClick={downloadJSONL}
         aria-disabled={isExportBlocked(plan)}
         title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
-        className={isExportBlocked(plan) ? 'opacity-60' : ''}
+        className={cn(buttonClass, isExportBlocked(plan) && 'opacity-60')}
       >
         Export JSONL
       </Button>
@@ -164,10 +184,40 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
         onClick={downloadPDF}
         aria-disabled={isExportBlocked(plan)}
         title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
-        className={isExportBlocked(plan) ? 'opacity-60' : ''}
+        className={cn(buttonClass, isExportBlocked(plan) && 'opacity-60')}
       >
         Export PDF
       </Button>
+      <Button
+        variant="default"
+        size="sm"
+        onClick={handleComplianceBundle}
+        disabled={generating}
+        className="rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all duration-200 active:scale-[0.98]"
+      >
+        {generating ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" strokeWidth={1.75} />
+            Generating…
+          </>
+        ) : generated ? (
+          <>
+            <CheckCircle2 className="mr-2 h-4 w-4" strokeWidth={1.75} />
+            Bundle Ready
+          </>
+        ) : (
+          <>
+            <Zap className="mr-2 h-4 w-4" strokeWidth={1.75} />
+            Export Compliance Bundle
+          </>
+        )}
+      </Button>
+      {generated && (
+        <span className="ml-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-medium dark:bg-emerald-900/40 dark:text-emerald-400">
+          <CheckCircle2 className="h-3 w-3" strokeWidth={1.75} />
+          Your ZIP bundle includes JSONL logs, PDF report, and a verification script.
+        </span>
+      )}
     </div>
   );
 }

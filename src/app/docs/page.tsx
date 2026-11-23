@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-blue-200 selection:text-zinc-900 dark:selection:bg-blue-900/30 dark:selection:text-blue-200">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       {/* Header */}
       <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/60 sticky top-0 z-40 backdrop-blur-md">
         <div className="max-w-[1400px] mx-auto px-6 py-3 lg:px-8">
@@ -70,7 +70,7 @@ export default function DocsPage() {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 lg:w-0 lg:flex-1">
+          <main className="min-w-0 max-w-2xl flex-1 lg:w-0 lg:flex-1">
             <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">
               Developer Documentation
             </h1>
@@ -164,7 +164,7 @@ export default function DocsPage() {
               {/* Tabs */}
               <div className="flex items-center gap-2 mb-8 border-b border-zinc-200 dark:border-zinc-800">
                 <button
-                  className="px-4 py-2 text-sm font-medium border-b-2 border-blue-500 text-blue-600 bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:bg-blue-950/20"
+                  className="border-b-2 border-zinc-900 px-4 py-2 text-sm font-medium text-zinc-900 dark:border-zinc-100 dark:text-zinc-100"
                   aria-pressed="true"
                 >
                   Node.js
@@ -244,7 +244,7 @@ console.log(result);`} />
               </h2>
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden mb-8">
                 <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex items-center gap-2">
-                  <Badge variant="default" className="bg-blue-500 text-white px-2 py-0.5 text-[10px] uppercase tracking-wider">
+                  <Badge variant="default" className="bg-zinc-900 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white dark:bg-zinc-100 dark:text-zinc-900">
                     POST
                   </Badge>
                   <span className="font-mono text-sm text-zinc-500 dark:text-zinc-400">
@@ -259,7 +259,7 @@ console.log(result);`} />
                   <div className="grid md:grid-cols-2 gap-6 mb-6">
                     <div>
                       <h4 className="text-sm font-semibold text-zinc-900 dark:text-white mb-2">URL</h4>
-                      <p className="text-xs font-mono text-blue-600 dark:text-blue-400 break-all">
+                      <p className="break-all font-mono text-xs text-zinc-900 dark:text-zinc-200">
                         https://agenttrace-eta.vercel.app/api/audit
                       </p>
                     </div>

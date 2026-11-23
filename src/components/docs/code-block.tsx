@@ -50,8 +50,8 @@ export function CodeBlock({ code, language = 'typescript', showLineNumbers = fal
   };
 
   return (
-    <div className="rounded-xl border border-zinc-800/50 bg-gray-900 shadow-lg overflow-hidden mb-8 dark:border-zinc-700">
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-800/50 bg-gray-950/80">
+    <div className="rounded-xl border border-zinc-800/50 bg-zinc-900 shadow-sm overflow-hidden mb-8 dark:border-zinc-700">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-800/50 bg-zinc-950/80">
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-red-500/80" />
           <span className="h-2 w-2 rounded-full bg-yellow-500/80" />

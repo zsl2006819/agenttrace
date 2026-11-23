@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { KeyRound, Plus, Trash, CircleAlert, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/copy-button';
-import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export interface ApiKeyRow {
   id: string;
@@ -21,6 +21,26 @@ const formatDate = (iso: string): string =>
     month: 'short',
     day: '2-digit',
   });
+
+const formatRelativeTime = (iso: string | null): string => {
+  if (!iso) return 'Never';
+  const date = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+};
+
+const headCell =
+  'px-4 py-2.5 text-[11px] font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400';
+
+const cellBase = 'px-6 py-4';
 
 export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
   const [keys, setKeys] = useState<ApiKeyRow[]>(initialKeys);
@@ -69,102 +89,126 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8 md:px-8">
+    <div className="mx-auto max-w-5xl px-6 py-10 md:px-10">
       {/* Header */}
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">API Keys</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+            API Keys
+          </h1>
+          <p className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             Use a key to authenticate requests from your agents to the audit API.
           </p>
         </div>
-        <Button onClick={handleGenerate} disabled={creating}>
+
+        <Button
+          onClick={handleGenerate}
+          disabled={creating}
+          className="rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+        >
           {creating ? (
             <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
           ) : (
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-4 w-4" strokeWidth={2} />
           )}
           Generate API Key
         </Button>
       </div>
 
       {error && (
-        <div className="mb-4 flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
-          <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+        <div className="mb-5 flex items-start gap-2 rounded-lg bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-400">
+          <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />
           <span>{error}</span>
         </div>
       )}
 
       {/* List */}
       {keys.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border px-6 py-16 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
-            <KeyRound className="h-6 w-6" />
+        <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200/70 bg-white px-6 py-16 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40">
+          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500">
+            <KeyRound className="h-5 w-5" strokeWidth={1.75} />
           </div>
-          <p className="text-sm font-medium text-foreground">No API keys yet</p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            No API keys yet
+          </p>
+          <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             Generate your first key to start recording audit events from your
             agents.
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-xl border border-zinc-200/70 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-border bg-muted/40">
-              <tr>
-                <th className="px-4 py-3 text-xs font-medium text-muted-foreground">
-                  Name
-                </th>
-                <th className="px-4 py-3 text-xs font-medium text-muted-foreground">
-                  Key
-                </th>
-                <th className="px-4 py-3 text-xs font-medium text-muted-foreground">
-                  Created
-                </th>
-                <th className="px-4 py-3 text-xs font-medium text-muted-foreground">
-                  Status
-                </th>
-                <th className="px-4 py-3" />
+            <thead>
+              <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                <th className={headCell}>Name</th>
+                <th className={headCell}>Key</th>
+                <th className={headCell}>Created</th>
+                <th className={headCell}>Last Used</th>
+                <th className={headCell}>Permissions</th>
+                <th className={headCell}>Status</th>
+                <th className={headCell} />
               </tr>
             </thead>
             <tbody>
               {keys.map((k) => {
                 const revoked = Boolean(k.revoked_at);
                 return (
-                  <tr key={k.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-3 font-medium text-foreground">
+                  <tr
+                    key={k.id}
+                    className="border-b border-zinc-100 last:border-0 transition-colors duration-150 hover:bg-zinc-50/80 dark:border-zinc-800/70 dark:hover:bg-zinc-800/30"
+                  >
+                    <td className={`${cellBase} text-sm font-medium text-zinc-900 dark:text-zinc-100`}>
                       {k.name}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    <td className={`${cellBase} font-mono text-sm text-zinc-600 dark:text-zinc-500`}>
                       {k.key_prefix}••••••••
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td className={`${cellBase} font-mono text-sm tabular-nums text-zinc-600 dark:text-zinc-500`}>
                       {formatDate(k.created_at)}
                     </td>
-                    <td className="px-4 py-3">
-                      <Badge
-                        variant="outline"
+                    <td className={`${cellBase} font-mono text-sm text-zinc-600 dark:text-zinc-500`}>
+                      {formatRelativeTime(k.last_used_at)}
+                    </td>
+                    <td className={cellBase}>
+                      <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400">
+                        Read/Write
+                      </span>
+                    </td>
+                    <td className={cellBase}>
+                      <span
                         className={
                           revoked
-                            ? 'border-red-200 bg-red-50 text-red-700'
-                            : 'border-green-200 bg-green-50 text-green-700'
+                            ? 'inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 dark:text-zinc-500'
+                            : 'inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400'
                         }
                       >
+                        <span
+                          aria-hidden
+                          className={
+                            revoked
+                              ? 'h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600'
+                              : 'h-1.5 w-1.5 rounded-full bg-emerald-500'
+                          }
+                        />
                         {revoked ? 'Revoked' : 'Active'}
-                      </Badge>
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className={`${cellBase} text-right`}>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={() => handleRevoke(k.id)}
                         disabled={revokingId === k.id}
-                        className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
+                        className={cn(
+                          'border-zinc-200 text-zinc-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:border-zinc-700 dark:text-zinc-500 dark:hover:bg-red-950/40 dark:hover:text-red-400 dark:hover:border-red-800',
+                          revokingId === k.id && 'opacity-50 pointer-events-none'
+                        )}
                       >
                         {revokingId === k.id ? (
                           <LoaderCircle className="h-4 w-4 animate-spin" />
                         ) : (
-                          <Trash className="h-4 w-4" />
+                          <Trash className="h-4 w-4" strokeWidth={1.75} />
                         )}
                         <span className="ml-2 hidden md:inline">Revoke</span>
                       </Button>
@@ -179,32 +223,39 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
 
       {/* One-time reveal modal */}
       {revealedKey && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-lg">
-            <div className="mb-4 flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-500">
-                <CircleAlert className="h-5 w-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-2xl border border-zinc-200/70 bg-white/95 p-6 shadow-xl backdrop-blur-xl dark:border-zinc-700 dark:bg-zinc-900/95">
+            <div className="mb-5 flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-500">
+                <CircleAlert className="h-4 w-4" strokeWidth={1.75} />
               </div>
               <div>
-                <h2 className="text-base font-semibold text-foreground">
+                <h2 className="text-base font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
                   Copy your API key now
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
                   Copy this key and store it somewhere safe. You will not be able
                   to view it again after closing this dialog.
                 </p>
               </div>
             </div>
 
-            <div className="mb-5 flex items-center gap-2 rounded-lg border border-border bg-muted/40 p-3">
-              <code className="flex-1 break-all font-mono text-xs text-foreground">
+            <div className="mb-5 flex items-center gap-2 rounded-lg bg-zinc-50 p-2.5 pl-3.5 dark:bg-zinc-800/60">
+              <code className="min-w-0 flex-1 break-all font-mono text-xs text-zinc-900 dark:text-zinc-100">
                 {revealedKey}
               </code>
-              <CopyButton value={revealedKey} label="Copy" />
+              <CopyButton
+                value={revealedKey}
+                label="Copy"
+                className="shrink-0 rounded-md bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+              />
             </div>
 
             <div className="flex justify-end">
-              <Button onClick={() => setRevealedKey(null)}>
+              <Button
+                onClick={() => setRevealedKey(null)}
+                className="rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+              >
                 I&apos;ve saved it
               </Button>
             </div>

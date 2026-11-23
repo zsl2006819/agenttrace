@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 interface UsageMeterProps {
@@ -17,8 +16,8 @@ const PLAN_LABELS: Record<string, string> = {
 const formatNumber = (value: number): string => value.toLocaleString('en-US');
 
 /**
- * Lightweight monthly usage indicator shown next to the Audit Logs heading.
- * Turns yellow once usage crosses 80% of the plan limit.
+ * Minimal monthly usage indicator: one line of text over a hairline bar.
+ * Deliberately quiet so it never competes with the audit data.
  */
 export function UsageMeter({ used, limit, plan }: UsageMeterProps) {
   const safeLimit = limit > 0 ? limit : 0;
@@ -27,57 +26,46 @@ export function UsageMeter({ used, limit, plan }: UsageMeterProps) {
   const exhausted = safeLimit > 0 && used >= safeLimit;
 
   return (
-    <div className="w-full max-w-sm rounded-xl border border-border bg-card p-4">
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground">
-            {formatNumber(used)} / {formatNumber(safeLimit)} events used
+    <div className="w-full md:w-64">
+      <div className="mb-1.5 flex items-baseline justify-between gap-3">
+        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="font-medium text-zinc-900 dark:text-zinc-100">
+            {formatNumber(used)}
           </span>
-        </div>
-        <Badge
-          variant="outline"
-          className={cn(
-            'shrink-0 text-[10px] uppercase tracking-wider',
-            plan === 'free'
-              ? 'border-zinc-300 text-zinc-600'
-              : 'border-emerald-300 text-emerald-700'
-          )}
-        >
+          {' / '}
+          {formatNumber(safeLimit)} events
+        </span>
+        <span className="text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
           {PLAN_LABELS[plan] ?? plan}
-        </Badge>
+        </span>
       </div>
 
-      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+      <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-200/80 dark:bg-zinc-800">
         <div
           className={cn(
             'h-full rounded-full transition-all duration-500',
             exhausted
               ? 'bg-red-500'
               : warning
-                ? 'bg-yellow-500'
-                : 'bg-emerald-500'
+                ? 'bg-amber-500'
+                : 'bg-zinc-900 dark:bg-zinc-100'
           )}
           style={{ width: `${pct}%` }}
         />
       </div>
 
-      <div className="mt-2 flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">
+      {warning && (
+        <p
+          className={cn(
+            'mt-1.5 text-[11px]',
+            exhausted ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-500'
+          )}
+        >
           {exhausted
-            ? 'Monthly limit reached'
-            : `${Math.round(pct)}% of monthly quota`}
-        </span>
-        {warning && (
-          <span
-            className={cn(
-              'text-xs font-medium',
-              exhausted ? 'text-red-600' : 'text-yellow-600'
-            )}
-          >
-            {exhausted ? 'Upgrade required' : 'Upgrade recommended'}
-          </span>
-        )}
-      </div>
+            ? 'Monthly limit reached — upgrade to keep recording.'
+            : 'Approaching your monthly limit.'}
+        </p>
+      )}
     </div>
   );
 }

@@ -4,8 +4,8 @@ import {
   createSupabaseServiceRole,
 } from '@/lib/supabase-server';
 import { getCurrentTenant } from '@/lib/tenant';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   Card,
   CardContent,
@@ -13,6 +13,16 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import {
+  User,
+  CreditCard,
+  Shield,
+  AlertTriangle,
+  Lock,
+  Trash2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { TwoFactorToggle } from '@/components/dashboard/two-factor-toggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,11 +41,37 @@ const PLAN_LABELS: Record<string, string> = {
   enterprise: 'Enterprise',
 };
 
-function Field({ label, value }: { label: string; value: string }) {
+function CardHeaderWithIcon({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+}) {
   return (
-    <div className="flex flex-col gap-1 border-b border-border py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="break-all font-mono text-sm text-foreground">{value}</span>
+    <CardHeader className="pb-1">
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+        <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          {title}
+        </CardTitle>
+      </div>
+      <CardDescription className="text-sm text-zinc-500 dark:text-zinc-400">
+        {description}
+      </CardDescription>
+    </CardHeader>
+  );
+}
+
+function FieldRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-zinc-100 pb-3 pt-2 last:border-0 dark:border-zinc-800/70 sm:flex-row">
+      <span className="text-sm text-zinc-500 dark:text-zinc-400">{label}</span>
+      <span className="break-all font-mono text-sm text-zinc-900 dark:text-zinc-100">
+        {value}
+      </span>
     </div>
   );
 }
@@ -61,75 +97,147 @@ export default async function SettingsPage() {
     .maybeSingle();
 
   const plan = (profile?.plan as string | undefined) ?? 'free';
-  const apiLimit = (profile?.api_limit as number | undefined) ?? 10_000;
+  const apiLimit =
+    (profile?.api_limit as number | undefined) ?? 10_000;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8 md:px-8">
+    <div className="mx-auto max-w-5xl px-6 py-10 md:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-foreground">Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+          Settings
+        </h1>
+        <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">
           Manage your account and workspace details.
         </p>
       </div>
 
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Account</CardTitle>
-            <CardDescription>Your personal account information.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col">
-              <Field label="Email" value={user.email ?? '—'} />
-              <Field label="User ID" value={user.id} />
-              <Field label="Tenant ID" value={tenantId ?? '—'} />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Subscription</CardTitle>
-            <CardDescription>
-              Manage your plan, billing, and payment method.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col">
-              <div className="flex items-center justify-between border-b border-border py-3">
-                <span className="text-sm text-muted-foreground">Current plan</span>
-                <Badge
-                  variant="outline"
-                  className={
-                    plan === 'free'
-                      ? 'border-zinc-300 text-zinc-600'
-                      : 'border-emerald-300 text-emerald-700'
-                  }
-                >
-                  {PLAN_LABELS[plan] ?? plan}
-                </Badge>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left column */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Account card */}
+          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900">
+            <CardHeaderWithIcon
+              icon={User}
+              title="Account"
+              description="Your personal account information."
+            />
+            <CardContent className="pt-0">
+              <div className="divide-y divide-zinc-100/70 dark:divide-zinc-800/70">
+                <FieldRow label="Email" value={user.email ?? '—'} />
+                <FieldRow label="User ID" value={user.id} />
+                <FieldRow label="Tenant ID" value={tenantId ?? '—'} />
               </div>
-              <Field
-                label="Monthly event limit"
-                value={apiLimit.toLocaleString('en-US')}
-              />
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Button asChild className="w-full sm:w-auto">
+          {/* Subscription card */}
+          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900">
+            <CardHeaderWithIcon
+              icon={CreditCard}
+              title="Subscription"
+              description="Manage your plan, billing, and payment method."
+            />
+            <CardContent className="pt-0">
+              <div className="divide-y divide-zinc-100/70 dark:divide-zinc-800/70">
+                <div className="flex items-center justify-between border-b border-zinc-100 pb-3 pt-2 last:border-0 dark:border-zinc-800/70">
+                  <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Current plan
+                  </span>
+                  <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">
+                    {PLAN_LABELS[plan] ?? plan}
+                  </span>
+                </div>
+                <FieldRow
+                  label="Monthly event limit"
+                  value={apiLimit.toLocaleString('en-US')}
+                />
+              </div>
+            </CardContent>
+            <div className="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/50 flex flex-col gap-3 sm:flex-row sm:items-end">
+              <Button
+                asChild
+                className={cn(
+                  'w-full sm:w-auto rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200'
+                )}
+              >
                 <a href={BILLING_SUPPORT_URL}>Contact Billing Support</a>
               </Button>
-              <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full sm:w-auto rounded-lg border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800"
+              >
                 <a href="/#pricing" target="_blank" rel="noopener noreferrer">
                   {plan === 'free' ? 'Upgrade plan' : 'View plans'}
                 </a>
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
+
+        {/* Right column */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Security card */}
+          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-zinc-800/50 dark:bg-zinc-900">
+            <CardHeaderWithIcon
+              icon={Shield}
+              title="Security"
+              description="Protect your account and workspace."
+            />
+            <CardContent className="pt-0">
+              <div className="divide-y divide-zinc-100/70 dark:divide-zinc-800/70">
+                <TwoFactorToggle
+                  label="Two-Factor Authentication"
+                  description="Add an extra layer of security to your account."
+                  enabled={false}
+                />
+                <TwoFactorToggle
+                  label="Active Sessions"
+                  description="View and manage active sessions across devices."
+                  enabled={false}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Danger Zone card */}
+          <Card className="overflow-hidden border border-red-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-red-900/30 dark:bg-zinc-900">
+            <CardHeader className="pb-1">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-red-500 dark:text-red-400" />
+                <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                  Danger Zone
+                </CardTitle>
+              </div>
+              <CardDescription className="text-sm text-zinc-500 dark:text-zinc-400">
+                Permanent actions. Cannot be undone.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between border-b border-zinc-100 py-3 last:border-0 dark:border-zinc-800/50">
+                <div>
+                  <span className="text-sm text-zinc-900 dark:text-zinc-100">
+                    Delete Workspace
+                  </span>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    Permanently delete all data and audit events.
+                  </p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+                >
+                  <Lock className="mr-2 h-4 w-4" strokeWidth={1.75} />
+                  Delete Account
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
-      <p className="mt-8 text-center text-xs text-muted-foreground">
+      <p className="mt-10 text-center text-xs leading-relaxed text-zinc-400 dark:text-zinc-500">
         AgentTrace provides technical infrastructure only and does not constitute
         formal legal advice.
       </p>

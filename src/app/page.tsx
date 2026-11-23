@@ -51,34 +51,40 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 sm:pt-32 lg:pt-40 xl:pt-48 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-50 via-white to-blue-50/30 dark:from-zinc-950 dark:via-zinc-950 dark:to-blue-950/20" />
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
+      <section className="relative overflow-hidden pt-24 pb-20 sm:pt-32 lg:pt-40">
+        {/* Backdrop: soft gradient + engineering grid + halo */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-zinc-50 via-white to-white dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-950" />
+          <div className="bg-grid absolute inset-0" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-zinc-200/50 blur-3xl dark:bg-zinc-800/40" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8 border border-blue-100 dark:border-blue-900/30">
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-4 py-1.5 text-sm font-medium text-zinc-600 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-300">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-zinc-400 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-zinc-900 dark:bg-zinc-100"></span>
               </span>
               EU AI Act Article 12 Compliant
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-zinc-900 dark:text-white mb-6 leading-tight">
+
+            <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl xl:text-7xl dark:text-white">
               Tamper-evident Audit Trails
               <br />
-              <span className="text-blue-600 dark:text-blue-400">for AI Agents</span>
+              <span className="bg-gradient-to-r from-zinc-500 via-zinc-700 to-zinc-500 bg-clip-text text-transparent dark:from-zinc-400 dark:via-zinc-200 dark:to-zinc-400">
+                for AI Agents
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Immutable hash chains, digital signatures, and compliance-ready reports.
-              Built for teams deploying AI agents under EU AI Act, SOC 2, and ISO 42001.
+
+            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-600 sm:text-xl dark:text-zinc-400">
+              From passive logging to active defense. The operating system for compliant AI agents.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-zinc-900 dark:bg-white dark:text-zinc-900 rounded-xl hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full rounded-xl bg-zinc-900 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-zinc-900/10 transition-all duration-200 hover:bg-zinc-700 hover:shadow-xl active:scale-[0.98] sm:w-auto dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 Get Started Free
               </Link>
@@ -86,29 +92,77 @@ export default function Home() {
                 href="https://github.com/zsl2006819/agenttrace"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-600 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all duration-200"
+                className="w-full rounded-xl border border-zinc-300 px-8 py-4 text-base font-semibold text-zinc-700 transition-all duration-200 hover:border-zinc-400 hover:bg-zinc-50 active:scale-[0.98] sm:w-auto dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
               >
                 View on GitHub
               </a>
             </div>
           </div>
 
+          {/* Abstract data flow */}
+          <div className="relative mx-auto mt-20 max-w-5xl sm:mt-24">
+            {/* Background grid */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-zinc-50/40 dark:bg-zinc-900/40 rounded-[2rem] blur-3xl"
+            />
+            {/* Radial glow pulses */}
+            <div
+              aria-hidden
+              className="absolute -top-24 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl dark:bg-blue-500/20 animate-pulse"
+            />
+            <div
+              aria-hidden
+              className="absolute -bottom-24 right-1/4 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl dark:bg-emerald-500/20 animate-pulse"
+              style={{ animationDelay: '1.2s' }}
+            />
+            {/* Gradient data bands */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+              {/* Left band — events */}
+              <div
+                className="absolute top-0 left-0 bottom-0 w-1/3 bg-gradient-to-b from-zinc-900 via-zinc-700 to-zinc-900 dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-100 opacity-60"
+              />
+              {/* Right band — signatures */}
+              <div
+                className="absolute top-0 right-0 bottom-0 w-1/3 bg-gradient-to-t from-zinc-500 via-zinc-300 to-zinc-500 dark:from-zinc-400 dark:via-zinc-700 dark:to-zinc-400 opacity-40"
+              />
+              {/* Center pulse line */}
+              <div
+                className="absolute top-0 left-1/2 bottom-0 w-[1px] bg-zinc-300 dark:bg-zinc-700 opacity-60"
+              />
+              {/* Node dots */}
+              {[0, 1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="absolute left-1/2 top-[calc(100%*_0.2)] -mt-1.5 w-3 h-3 rounded-full bg-zinc-900 shadow-[0_0_10px_rgba(24,24,27,0.6)] dark:bg-zinc-100 dark:shadow-[0_0_10px_rgba(244,244,245,0.6)]"
+                  style={{
+                    animationName: 'data-pulse',
+                    animationDelay: `${i * 0.3}s`,
+                    animationDuration: '2s',
+                    animationTimingFunction: 'ease-in-out',
+                    animationIterationCount: 'infinite',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
           {/* Trust indicators */}
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500 dark:text-zinc-500 opacity-70">
+          <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500 dark:text-zinc-500">
             <div className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <span>EU AI Act Article 12</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <span>SOC 2 Type II Ready</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <span>ISO 42001 Aligned</span>
@@ -131,9 +185,9 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {/* Feature 1 */}
-            <div className="group p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 hover:border-blue-200 dark:hover:border-blue-900 transition-all duration-300 hover:shadow-xl">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group relative rounded-2xl border border-zinc-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-900/5 dark:border-zinc-800 dark:bg-zinc-900/50 dark:hover:border-zinc-700">
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200/80 bg-gradient-to-br from-zinc-50 to-zinc-100 text-zinc-900 shadow-sm transition-transform duration-300 group-hover:scale-105 dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-800/40 dark:text-zinc-100">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
               </div>
@@ -159,9 +213,9 @@ export default function Home() {
             </div>
 
             {/* Feature 2 */}
-            <div className="group p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 hover:border-purple-200 dark:hover:border-purple-900 transition-all duration-300 hover:shadow-xl">
-              <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group relative rounded-2xl border border-zinc-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-900/5 dark:border-zinc-800 dark:bg-zinc-900/50 dark:hover:border-zinc-700">
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200/80 bg-gradient-to-br from-zinc-50 to-zinc-100 text-zinc-900 shadow-sm transition-transform duration-300 group-hover:scale-105 dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-800/40 dark:text-zinc-100">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
@@ -187,9 +241,9 @@ export default function Home() {
             </div>
 
             {/* Feature 3 */}
-            <div className="group p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 hover:border-green-200 dark:hover:border-green-900 transition-all duration-300 hover:shadow-xl">
-              <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="group relative rounded-2xl border border-zinc-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-900/5 dark:border-zinc-800 dark:bg-zinc-900/50 dark:hover:border-zinc-700">
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200/80 bg-gradient-to-br from-zinc-50 to-zinc-100 text-zinc-900 shadow-sm transition-transform duration-300 group-hover:scale-105 dark:border-zinc-700 dark:from-zinc-800 dark:to-zinc-800/40 dark:text-zinc-100">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
@@ -267,8 +321,8 @@ export default function Home() {
             </div>
 
             {/* Starter Plan */}
-            <div className="relative p-8 rounded-2xl border-2 border-blue-500 dark:border-blue-500 bg-white dark:bg-zinc-950 shadow-xl">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">
+            <div className="relative p-8 rounded-2xl border-2 border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 shadow-sm">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold rounded-full">
                 Most Popular
               </div>
               <div className="text-center mb-8">
@@ -303,7 +357,7 @@ export default function Home() {
               </ul>
               <PricingCheckoutButton
                 plan="starter"
-                className="w-full px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-center shadow-lg"
+                className="w-full px-4 py-3 text-sm font-semibold text-white bg-zinc-900 rounded-xl hover:bg-zinc-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-center shadow-sm"
               >
                 Get Started
               </PricingCheckoutButton>

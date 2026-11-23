@@ -96,7 +96,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-50 px-4 py-12 dark:bg-zinc-950">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-zinc-50 px-4 py-12 dark:bg-zinc-950">
       {/* Subtle background accents */}
       <div
         aria-hidden
@@ -278,7 +278,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-zinc-950">
+        <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-white" />
         </div>
       }
