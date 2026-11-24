@@ -45,7 +45,7 @@ export function DashboardSidebar({ email }: { email: string | null }) {
   return (
     <aside
       className={cn(
-        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-zinc-200/70 bg-zinc-50/60 transition-[width] duration-200',
+        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-slate-200/70 bg-slate-50/50 transition-[width] duration-200',
         collapsed ? 'w-14' : 'w-60'
       )}
     >

@@ -75,31 +75,31 @@ export default function SecurityPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-10 md:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Security & Guardrails
         </h1>
-        <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1.5 text-sm text-slate-500">
           Define interception rules to stop unsafe agent actions before they happen.
         </p>
       </div>
 
       {/* Status banner */}
-      <section className="mb-8 rounded-xl p-6 flex items-center gap-4 text-sm shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:shadow-none border">
+      <section className="mb-8 rounded-xl p-6 flex items-center gap-4 text-sm shadow-[0_1px_3px_rgba(0,0,0,0.02)] border border-slate-200/80 bg-white">
         {hasRisk ? (
           <>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50/50 text-amber-700">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
               <AlertTriangle className="h-6 w-6" strokeWidth={1.75} />
             </div>
-            <div className="border-l border-amber-200 pl-4">
-              <h3 className="font-semibold text-amber-700">High Risk Detected</h3>
-              <p className="mt-0.5 text-amber-600 text-[12px]">
-                2 active guardrail rules are blocking potentially unsafe agent operations.
+            <div className="border-l border-red-100 pl-4">
+              <h3 className="font-semibold text-red-700">High Risk Detected</h3>
+              <p className="mt-0.5 text-red-600 text-[12px]">
+                Active guardrail rules have intercepted unsafe agent operations this month.
               </p>
             </div>
           </>
         ) : (
           <>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-500">
               <ShieldCheck className="h-6 w-6" strokeWidth={1.75} />
             </div>
             <div className="border-l border-emerald-100 pl-4">

@@ -201,37 +201,48 @@ export default async function DashboardPage() {
         <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex flex-col h-full">
           <div className="flex items-center justify-between">
             <div className="relative w-16 h-16">
-              <svg className="w-full h-full" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="45"
-                  stroke="slate-100"
-                  strokeWidth="8"
-                  fill="transparent"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="45"
-                  stroke="emerald-600"
-                  strokeWidth="8"
-                  fill="transparent"
-                  strokeDasharray="283"
-                  strokeDashoffset={5.66}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-3xl font-bold tabular-nums text-emerald-600 leading-none">98</p>
-              </div>
+              {totalEventsCount === 0 ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="text-3xl font-bold tabular-nums text-slate-400 leading-none">--</p>
+                </div>
+              ) : (
+                <>
+                  <svg className="w-full h-full" viewBox="0 0 100 100">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      stroke="slate-100"
+                      strokeWidth="8"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      stroke="emerald-600"
+                      strokeWidth="8"
+                      fill="transparent"
+                      strokeDasharray="283"
+                      strokeDashoffset={5.66}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="text-3xl font-bold tabular-nums text-emerald-600 leading-none">100</p>
+                  </div>
+                </>
+              )}
             </div>
             <div>
               <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
                 Trust Score
               </p>
-              <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
-                Excellent
+              <p className={cn(
+                'text-xs font-medium uppercase tracking-wider',
+                totalEventsCount === 0 ? 'text-slate-400' : 'text-emerald-600'
+              )}>
+                {totalEventsCount === 0 ? 'Awaiting data' : 'Excellent'}
               </p>
             </div>
           </div>

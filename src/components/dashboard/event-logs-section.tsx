@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { EventVolumeSparkline } from './event-volume-sparkline';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface AuditEvent {
   id: string;
@@ -30,9 +31,9 @@ interface AuditEvent {
 }
 
 const CODE_SNIPPET = [
-  '$ npm install @agenttrace/sdk',
-  "$ agenttrace.init({ apiKey: 'at_live_...' })",
-  "$ agenttrace.capture({ tool: 'llm_chat', input: '...' })",
+  { parts: [['$ ', 'text-slate-400'], ['npm ', 'text-blue-400'], ['install ', 'text-blue-400'], ['@agenttrace/sdk', 'text-green-400']] },
+  { parts: [['$ ', 'text-slate-400'], ['agenttrace.init(', 'text-blue-400'], ["{ apiKey: 'at_live_...' })", 'text-slate-300']] },
+  { parts: [['$ ', 'text-slate-400'], ['agenttrace.capture(', 'text-blue-400'], ["{ tool: 'llm_chat', input: '...' })", 'text-slate-300']] },
 ];
 
 export function EventLogsSection({
@@ -128,12 +129,23 @@ export function EventLogsSection({
           <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto leading-relaxed">
             Start sending events to see your audit trail and AI insights.
           </p>
-          <div className="bg-slate-900 rounded-lg p-4 font-mono text-xs text-slate-300 overflow-x-auto text-left max-w-md mx-auto mb-4">
-            {CODE_SNIPPET.map((line, i) => (
-              <div key={i} className="mb-1">
-                {line}
-              </div>
-            ))}
+          <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-sm max-w-md mx-auto mb-4">
+            <div className="flex items-center gap-1 px-3 py-1.5 bg-slate-800 border-b border-slate-700">
+              <span className="h-2 w-2 rounded-full bg-red-500" />
+              <span className="h-2 w-2 rounded-full bg-yellow-500" />
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+            </div>
+            <div className="p-4 font-mono text-xs overflow-x-auto text-left">
+              {CODE_SNIPPET.map((line, li) => (
+                <div key={li} className="mb-1">
+                  {line.parts.map(([text, color], pi) => (
+                    <span key={pi} className={cn('whitespace-pre', color)}>
+                      {text}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
           <Button size="sm" className="rounded-lg">
             Copy Integration Code
