@@ -227,15 +227,15 @@ export function EventLogsRow({ record, onSelect }: ClickableRowProps) {
   return (
     <button
       onClick={() => onSelect(record)}
-      className="w-full text-left hover:bg-zinc-50/80 transition-colors duration-150 dark:hover:bg-zinc-800/30 group"
+      className="w-full text-left transition-all duration-200 group"
     >
-      <tr className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/70">
-        <td className="px-6 py-4 align-middle text-sm font-mono text-zinc-600 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
-          <span className="rounded-md border border-zinc-100 bg-zinc-50 px-2 py-0.5 dark:border-zinc-800/50 dark:bg-zinc-800/40">
+      <tr className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/70 h-14">
+        <td className="px-6 align-middle text-xs font-mono text-zinc-600 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+          <span className="rounded bg-zinc-100 px-1.5 py-0.5 dark:bg-zinc-800/40">
             {record.id.substring(0, 8)}
           </span>
         </td>
-        <td className="px-6 py-4 align-middle text-sm font-mono tabular-nums text-zinc-600 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+        <td className="px-6 align-middle text-xs font-mono tabular-nums text-zinc-600 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
           {new Date(record.created_at).toLocaleString('en-US', {
             month: '2-digit',
             day: '2-digit',
@@ -244,16 +244,16 @@ export function EventLogsRow({ record, onSelect }: ClickableRowProps) {
             second: '2-digit',
           })}
         </td>
-        <td className="px-6 py-4 align-middle text-sm text-zinc-900 dark:text-zinc-100">
+        <td className="px-6 align-middle text-[13px] text-zinc-600 dark:text-zinc-400">
           {record.agent_id}
         </td>
-        <td className="px-6 py-4 align-middle text-sm text-zinc-900 dark:text-zinc-100">
+        <td className="px-6 align-middle text-[13px] text-zinc-600 dark:text-zinc-400">
           {record.tool_name}
         </td>
-        <td className="px-6 py-4 align-middle text-sm font-mono tabular-nums text-zinc-600 dark:text-zinc-500">
+        <td className="px-6 align-middle text-xs font-mono tabular-nums text-zinc-600 dark:text-zinc-500">
           {record.sequence}
         </td>
-        <td className="px-6 py-4 align-middle">
+        <td className="px-6 align-middle">
           <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
             <span
               aria-hidden
@@ -262,7 +262,7 @@ export function EventLogsRow({ record, onSelect }: ClickableRowProps) {
             Verified
           </span>
         </td>
-        <td className="px-6 py-4 align-middle text-right opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        <td className="px-6 align-middle text-right opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <ChevronRight className="h-3 w-3 text-zinc-400" />
         </td>
       </tr>

@@ -69,34 +69,40 @@ export function EventLogsSection({
           </h3>
         </div>
         <div className="space-y-3">
-          <div className="rounded-lg border border-zinc-100 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
-              <AlertTriangle className="h-5 w-5" strokeWidth={1.5} />
-            </div>
-            <div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">Agent [agent-demo]</span> has a{' '}
-                <span className="font-medium text-amber-600">30% higher error rate</span> than usual.
-              </p>
-            </div>
-          </div>
-          <div className="rounded-lg border border-zinc-100 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3">
+          <div
+            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3 group border-l-2 border-emerald-500"
+          >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400">
               <ShieldCheck className="h-5 w-5" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed">
                 Guardrail blocked <span className="font-medium text-zinc-900 dark:text-zinc-100">3 attempts</span> to access{' '}
                 <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">drop_table</span> today.
               </p>
             </div>
           </div>
-          <div className="rounded-lg border border-zinc-100 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3">
+          <div
+            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3 group border-l-2 border-amber-500"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
+              <AlertTriangle className="h-5 w-5" strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed">
+                <span className="font-medium text-zinc-900 dark:text-zinc-100">Agent [agent-demo]</span> has a{' '}
+                <span className="font-medium text-amber-600">30% higher error rate</span> than usual.
+              </p>
+            </div>
+          </div>
+          <div
+            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3 group border-l-2 border-zinc-500"
+          >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-50 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
               <Zap className="h-5 w-5" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed">
                 Recommendation: Consider rotating the API Key used by{' '}
                 <span className="font-medium text-zinc-900 dark:text-zinc-100">agent-qa</span>.
               </p>

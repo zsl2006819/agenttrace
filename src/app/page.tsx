@@ -84,7 +84,7 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/dashboard"
-                className="w-full rounded-xl bg-zinc-900 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-zinc-900/10 transition-all duration-200 hover:bg-zinc-700 hover:shadow-xl active:scale-[0.98] sm:w-auto dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="w-full rounded-xl bg-zinc-900 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-[0_0_20px_rgba(24,24,27,0.1)] transition-all duration-200 hover:bg-zinc-700 hover:shadow-[0_0_30px_rgba(24,24,27,0.15)] active:scale-[0.98] sm:w-auto dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 Get Started Free
               </Link>

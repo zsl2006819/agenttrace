@@ -33,7 +33,7 @@ const itemBase =
   'flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors';
 
 const itemActive =
-  'bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100';
+  'bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 border-l-2 border-l-zinc-900 dark:border-l-zinc-100';
 
 const itemIdle =
   'text-zinc-500 hover:bg-zinc-100/70 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-100';

@@ -40,7 +40,7 @@ const formatRelativeTime = (iso: string | null): string => {
 const headCell =
   'px-4 py-2.5 text-[11px] font-medium uppercase tracking-widest text-zinc-500 dark:text-zinc-400';
 
-const cellBase = 'px-6 py-4';
+const cellBase = 'px-6 py-3';
 
 export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
   const [keys, setKeys] = useState<ApiKeyRow[]>(initialKeys);
@@ -156,12 +156,12 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
                 return (
                   <tr
                     key={k.id}
-                    className="border-b border-zinc-100 last:border-0 transition-colors duration-150 hover:bg-zinc-50/80 dark:border-zinc-800/70 dark:hover:bg-zinc-800/30"
+                    className="border-b border-zinc-100 last:border-0 transition-all duration-200 hover:bg-zinc-50 dark:border-zinc-800/70 dark:hover:bg-zinc-800/30 h-14"
                   >
                     <td className={`${cellBase} text-sm font-medium text-zinc-900 dark:text-zinc-100`}>
                       {k.name}
                     </td>
-                    <td className={`${cellBase} font-mono text-sm text-zinc-600 dark:text-zinc-500`}>
+                    <td className={`${cellBase} font-mono text-xs text-zinc-600 dark:text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded dark:bg-zinc-800/40`}>
                       {k.key_prefix}••••••••
                     </td>
                     <td className={`${cellBase} font-mono text-sm tabular-nums text-zinc-600 dark:text-zinc-500`}>

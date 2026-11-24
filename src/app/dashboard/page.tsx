@@ -226,7 +226,7 @@ export default async function DashboardPage() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400 leading-none">98</p>
+                <p className="text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400 leading-none drop-shadow-sm">98</p>
               </div>
             </div>
             <div>

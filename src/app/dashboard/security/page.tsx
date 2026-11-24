@@ -80,7 +80,7 @@ export default function SecurityPage() {
       <section className="mb-8 rounded-xl p-6 flex items-center gap-4 text-sm shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:shadow-none border">
         {hasRisk ? (
           <>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500 dark:bg-red-900/20 dark:text-red-400">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50/50 text-red-700 dark:bg-red-900/20 dark:text-red-400">
               <AlertTriangle className="h-6 w-6" strokeWidth={1.75} />
             </div>
             <div className="border-l border-red-100 pl-4 dark:border-red-900/30">
@@ -149,12 +149,12 @@ export default function SecurityPage() {
                       {rule.condition}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ${actionStyle.color} ${actionStyle.bg}`}>
+                      <span className={`inline-flex items-center rounded-sm px-2 py-1 text-[10px] font-semibold ${actionStyle.color} ${actionStyle.bg}`}>
                         {rule.action}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ${statusStyle.color} ${statusStyle.bg}`}>
+                      <span className={`inline-flex items-center rounded-sm px-2 py-1 text-[10px] font-semibold ${statusStyle.color} ${statusStyle.bg}`}>
                         {rule.status}
                       </span>
                     </td>
@@ -198,6 +198,7 @@ export default function SecurityPage() {
                 type="url"
                 placeholder="https://hooks.slack.com/services/..."
                 defaultValue=""
+                className="bg-zinc-50 dark:bg-zinc-900 focus:ring-zinc-900"
               />
             </div>
             <div className="flex gap-2">
