@@ -242,7 +242,11 @@ export default async function DashboardPage() {
       <ChainIntegrityBanner />
 
       {/* Event logs table + drawer */}
-      <EventLogsSection records={records} dailyCounts={dailyCounts} />
+      <EventLogsSection
+        records={records}
+        dailyCounts={dailyCounts}
+        totalEvents={totalEventsCount ?? 0}
+      />
 
       {/* Free plan upgrade banner */}
       {isFree && (

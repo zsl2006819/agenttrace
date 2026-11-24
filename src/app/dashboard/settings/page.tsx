@@ -111,7 +111,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left column */}
         <div className="lg:col-span-1 space-y-6 flex flex-col h-full">
           {/* Account card */}

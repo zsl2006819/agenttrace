@@ -42,19 +42,27 @@ const RULES = [
 ];
 
 const ACTION_LABELS: Record<string, { color: string; bg: string }> = {
-  Block: { color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/20' },
-  Alert: { color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/20' },
+  Block: { color: 'text-red-600', bg: 'bg-red-50' },
+  Alert: { color: 'text-amber-600', bg: 'bg-amber-50' },
 };
 
 const STATUS_LABELS: Record<string, { color: string; bg: string }> = {
-  Active: { color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/20' },
-  Inactive: { color: 'text-zinc-500 dark:text-zinc-400', bg: 'bg-zinc-100 dark:bg-zinc-800/50' },
+  Active: { color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  Inactive: { color: 'text-zinc-500', bg: 'bg-zinc-100' },
 };
 
 export default function SecurityPage() {
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [hasRisk, setHasRisk] = useState(true);
+
+  // Dynamic risk assessment: only show red warning when there is an active
+  // Block rule. Without any rules, or without an active Block rule, the
+  // system is considered protected.
+  const hasRules = RULES.length > 0;
+  const hasBlockEvent = RULES.some(
+    (rule) => rule.action === 'Block' && rule.status === 'Active'
+  );
+  const hasRisk = hasRules && hasBlockEvent;
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +70,6 @@ export default function SecurityPage() {
     await new Promise((r) => setTimeout(r, 800));
     setCreating(false);
     setOpen(false);
-    setHasRisk(false);
   };
 
   return (
@@ -92,12 +99,12 @@ export default function SecurityPage() {
           </>
         ) : (
           <>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 dark:bg-emerald-900/20 dark:text-emerald-400">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
               <ShieldCheck className="h-6 w-6" strokeWidth={1.75} />
             </div>
-            <div className="border-l border-emerald-100 pl-4 dark:border-emerald-900/30">
-              <h3 className="font-semibold text-emerald-700 dark:text-emerald-400">System Protected</h3>
-              <p className="mt-0.5 text-emerald-600 dark:text-emerald-400/90 text-[12px]">
+            <div className="border-l border-emerald-100 pl-4">
+              <h3 className="font-semibold text-emerald-700">System Protected</h3>
+              <p className="mt-0.5 text-emerald-600 text-[12px]">
                 All guardrail rules are active. No active threats detected.
               </p>
             </div>
