@@ -3,7 +3,6 @@ import {
   createSupabaseServerWithAuth,
   createSupabaseServiceRole,
 } from '@/lib/supabase-server';
-import { getCurrentTenant } from '@/lib/tenant';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -26,11 +25,6 @@ import { TwoFactorToggle } from '@/components/dashboard/two-factor-toggle';
 
 export const dynamic = 'force-dynamic';
 
-/**
- * Billing support runs through email rather than a self-serve portal, so
- * subscription changes are handled by a human. The subject line is
- * pre-filled to make triage easier.
- */
 const BILLING_SUPPORT_URL =
   'mailto:zsl.2006819@outlook.com?subject=Billing%20Inquiry';
 
@@ -51,17 +45,15 @@ function CardHeaderWithIcon({
   description: string;
 }) {
   return (
-        <CardHeader className="pb-1">
-          <div className="flex items-center gap-2">
-            <Icon className="h-4 w-4 text-zinc-500" />
-            <CardTitle className="text-base font-semibold text-zinc-900">
-              {title}
-            </CardTitle>
-          </div>
-          <CardDescription className="text-sm text-zinc-500">
-            {description}
-          </CardDescription>
-        </CardHeader>
+    <CardHeader className="pb-1">
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-zinc-500" />
+        <CardTitle className="text-base font-semibold text-zinc-900">
+          {title}
+        </CardTitle>
+      </div>
+      <CardDescription className="text-sm text-zinc-500">{description}</CardDescription>
+    </CardHeader>
   );
 }
 
@@ -69,53 +61,97 @@ function FieldRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between border-b border-zinc-200/50 pb-3 pt-2 last:border-0">
       <span className="text-sm text-zinc-500">{label}</span>
-      <span className="break-all font-mono text-sm text-zinc-900">
-        {value}
-      </span>
+      <span className="break-all font-mono text-sm text-zinc-900">{value}</span>
     </div>
   );
+}
+
+function SkeletonFieldRow({ label }: { label: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-zinc-200/50 pb-3 pt-2 last:border-0">
+      <span className="text-sm text-zinc-500">{label}</span>
+      <div className="h-5 w-32 rounded-full bg-slate-200 animate-pulse" />
+    </div>
+  );
+}
+
+interface SettingsData {
+  tenantId: string | null;
+  plan: string;
+  apiLimit: number;
+  error: string | null;
+  loading: boolean;
 }
 
 export default async function SettingsPage() {
   const supabase = createSupabaseServerWithAuth();
   const {
     data: { user },
-    error,
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (error || !user) {
+  if (authError || !user) {
     redirect('/login?redirect=/dashboard/settings');
   }
 
-  const tenantId = await getCurrentTenant(supabase);
+  let data: SettingsData = {
+    tenantId: null,
+    plan: 'free',
+    apiLimit: 10_000,
+    error: null,
+    loading: true,
+  };
 
-  const service = createSupabaseServiceRole();
-  const { data: profile } = await service
-    .from('profiles')
-    .select('plan, api_limit')
-    .eq('id', user.id)
-    .maybeSingle();
+  try {
+    const service = createSupabaseServiceRole();
 
-  const plan = (profile?.plan as string | undefined) ?? 'free';
-  const apiLimit =
-    (profile?.api_limit as number | undefined) ?? 10_000;
+    // Fetch profile with tenant_id included
+    const { data: profile, error: profileError } = await service
+      .from('profiles')
+      .select('tenant_id, plan, api_limit')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      throw new Error(profileError.message);
+    }
+
+    data.tenantId = (profile?.tenant_id as string | undefined) ?? null;
+    data.plan = (profile?.plan as string | undefined) ?? 'free';
+    data.apiLimit =
+      (profile?.api_limit as number | undefined) ?? 10_000;
+    data.loading = false;
+  } catch (e) {
+    data.error = e instanceof Error ? e.message : 'Failed to load settings';
+    data.loading = false;
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10 md:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Settings
         </h1>
-        <p className="mt-1.5 text-sm text-zinc-500">
+        <p className="mt-1.5 text-sm text-slate-500">
           Manage your account and workspace details.
         </p>
       </div>
+
+      {data.error && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          Failed to load settings. Please try again later.
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left column */}
         <div className="lg:col-span-1 space-y-6 flex flex-col h-full">
           {/* Account card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] h-full flex flex-col">
+          <Card
+            className={cn(
+              'overflow-hidden border border-slate-200 rounded-xl bg-white shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300'
+            )}
+          >
             <CardHeaderWithIcon
               icon={User}
               title="Account"
@@ -125,13 +161,26 @@ export default async function SettingsPage() {
               <div className="divide-y divide-zinc-200/50">
                 <FieldRow label="Email" value={user.email ?? '—'} />
                 <FieldRow label="User ID" value={user.id} />
-                <FieldRow label="Tenant ID" value={tenantId ?? '—'} />
+                {data.loading ? (
+                  <SkeletonFieldRow label="Tenant ID" />
+                ) : data.error ? (
+                  <FieldRow label="Tenant ID" value="Failed to load" />
+                ) : (
+                  <FieldRow
+                    label="Tenant ID"
+                    value={data.tenantId ?? '—'}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Subscription card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] h-full flex flex-col">
+          <Card
+            className={cn(
+              'overflow-hidden border border-slate-200 rounded-xl bg-white shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300'
+            )}
+          >
             <CardHeaderWithIcon
               icon={CreditCard}
               title="Subscription"
@@ -144,12 +193,12 @@ export default async function SettingsPage() {
                     Current plan
                   </span>
                   <span className="text-sm font-semibold text-zinc-900 uppercase tracking-widest">
-                    {PLAN_LABELS[plan] ?? plan}
+                    {PLAN_LABELS[data.plan] ?? data.plan}
                   </span>
                 </div>
                 <FieldRow
                   label="Monthly event limit"
-                  value={apiLimit.toLocaleString('en-US')}
+                  value={data.apiLimit.toLocaleString('en-US')}
                 />
               </div>
             </CardContent>
@@ -168,7 +217,7 @@ export default async function SettingsPage() {
                 className="w-full sm:w-auto rounded-lg border-zinc-200 hover:bg-zinc-50"
               >
                 <a href="/#pricing" target="_blank" rel="noopener noreferrer">
-                  {plan === 'free' ? 'Upgrade plan' : 'View plans'}
+                  {data.plan === 'free' ? 'Upgrade plan' : 'View plans'}
                 </a>
               </Button>
             </div>
@@ -178,7 +227,11 @@ export default async function SettingsPage() {
         {/* Right column */}
         <div className="lg:col-span-1 space-y-6 flex flex-col h-full">
           {/* Security card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] h-full flex flex-col">
+          <Card
+            className={cn(
+              'overflow-hidden border border-slate-200 rounded-xl bg-white shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300'
+            )}
+          >
             <CardHeaderWithIcon
               icon={Shield}
               title="Security"
@@ -201,7 +254,11 @@ export default async function SettingsPage() {
           </Card>
 
           {/* Danger Zone card */}
-          <Card className="overflow-hidden border border-zinc-200/50 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.02)] h-full flex flex-col">
+          <Card
+            className={cn(
+              'overflow-hidden border border-slate-200 rounded-xl bg-white shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300'
+            )}
+          >
             <CardHeader className="pb-1">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-500" />

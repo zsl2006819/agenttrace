@@ -160,7 +160,7 @@ export default async function DashboardPage() {
 
       {/* KPI cards */}
       <div className="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
             Total Events
           </p>
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
             {(totalEventsCount ?? 0).toLocaleString('en-US')}
           </p>
         </div>
-        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
             Quota Used
           </p>
@@ -176,7 +176,7 @@ export default async function DashboardPage() {
             {usedThisMonth.toLocaleString('en-US')} /{' '}
             {apiLimit.toLocaleString('en-US')}
           </div>
-          <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200 mt-auto">
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-500',
@@ -190,15 +190,15 @@ export default async function DashboardPage() {
             />
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm h-full flex flex-col transition-colors duration-200 hover:border-slate-300">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
             Active Keys
           </p>
-          <p className="text-3xl font-medium tabular-nums text-slate-900">
+          <p className="text-3xl font-medium tabular-nums text-slate-900 mt-auto">
             {(activeKeysCount ?? 0).toLocaleString('en-US')}
           </p>
         </div>
-        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex flex-col h-full">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex flex-col h-full transition-colors duration-200 hover:border-slate-300">
           <div className="flex items-center justify-between">
             <div className="relative w-16 h-16">
               {totalEventsCount === 0 ? (

@@ -42,12 +42,12 @@ export function EventVolumeSparkline({
       </div>
 
       {isEmpty ? (
-        <div className="h-64 w-full flex flex-col items-center justify-center pt-10 text-center">
+        <div className="h-48 w-full flex flex-col items-center justify-center pt-8 text-center">
           <Activity className="mb-3 h-8 w-8 text-slate-200" />
           <p className="text-xs text-slate-400">Waiting for event data...</p>
         </div>
       ) : (
-        <div className="h-64 w-full px-6 pb-6">
+          <div className="h-48 w-full px-6 pb-6">
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={dailyCounts} margin={{ top: 10, right: 20, bottom: 8, left: 0 }}>
               <defs>

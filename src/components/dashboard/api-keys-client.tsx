@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { KeyRound, Plus, Trash, CircleAlert, LoaderCircle } from 'lucide-react';
+import { KeyRound, Plus, Trash, CircleAlert, LoaderCircle, Plug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/copy-button';
 import { cn } from '@/lib/utils';
@@ -93,10 +93,10 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900">
             API Keys
           </h1>
-          <p className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
             Use a key to authenticate requests from your agents to the audit API.
           </p>
         </div>
@@ -104,7 +104,7 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
         <Button
           onClick={handleGenerate}
           disabled={creating}
-          className="rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="rounded-lg bg-slate-900 text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]"
         >
           {creating ? (
             <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -124,23 +124,32 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
 
       {/* List */}
       {keys.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200/70 bg-white px-6 py-16 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40">
-          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500">
-            <KeyRound className="h-5 w-5" strokeWidth={1.75} />
-          </div>
-          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 px-6 py-16 text-center shadow-sm">
+          <Plug className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+          <p className="text-sm font-medium text-slate-900 mb-1">
             No API keys yet
           </p>
-          <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            Generate your first key to start recording audit events from your
-            agents.
+          <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">
+            Generate your first key to start recording audit events from your agents.
           </p>
+          <Button
+            onClick={handleGenerate}
+            disabled={creating}
+            className="mt-6 rounded-lg bg-slate-900 text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]"
+          >
+            {creating ? (
+              <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Plus className="mr-2 h-4 w-4" strokeWidth={2} />
+            )}
+            + Generate First API Key
+          </Button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-zinc-200/70 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40">
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-colors duration-200 hover:border-slate-300">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-zinc-100 dark:border-zinc-800">
+              <tr className="border-b border-slate-200">
                 <th className={headCell}>Name</th>
                 <th className={headCell}>Key</th>
                 <th className={headCell}>Created</th>
@@ -156,22 +165,22 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
                 return (
                   <tr
                     key={k.id}
-                    className="border-b border-zinc-100 last:border-0 transition-all duration-200 hover:bg-zinc-50 dark:border-zinc-800/70 dark:hover:bg-zinc-800/30 h-14"
+                    className="border-b border-slate-200 last:border-0 transition-all duration-200 hover:bg-slate-50 h-14"
                   >
-                    <td className={`${cellBase} text-sm font-medium text-zinc-900 dark:text-zinc-100`}>
+                    <td className={`${cellBase} text-sm font-medium text-slate-900`}>
                       {k.name}
                     </td>
-                    <td className={`${cellBase} font-mono text-xs text-zinc-600 dark:text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded dark:bg-zinc-800/40`}>
+                    <td className={`${cellBase} font-mono text-xs text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded`}>
                       {k.key_prefix}••••••••
                     </td>
-                    <td className={`${cellBase} font-mono text-sm tabular-nums text-zinc-600 dark:text-zinc-500`}>
+                    <td className={`${cellBase} font-mono text-sm tabular-nums text-slate-600`}>
                       {formatDate(k.created_at)}
                     </td>
-                    <td className={`${cellBase} font-mono text-sm text-zinc-600 dark:text-zinc-500`}>
+                    <td className={`${cellBase} font-mono text-sm text-slate-600`}>
                       {formatRelativeTime(k.last_used_at)}
                     </td>
                     <td className={cellBase}>
-                      <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400">
+                      <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
                         Read/Write
                       </span>
                     </td>
@@ -179,15 +188,15 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
                       <span
                         className={
                           revoked
-                            ? 'inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 dark:text-zinc-500'
-                            : 'inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400'
+                            ? 'inline-flex items-center gap-1.5 text-xs font-medium text-slate-400'
+                            : 'inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700'
                         }
                       >
                         <span
                           aria-hidden
                           className={
                             revoked
-                              ? 'h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600'
+                              ? 'h-1.5 w-1.5 rounded-full bg-slate-300'
                               : 'h-1.5 w-1.5 rounded-full bg-emerald-500'
                           }
                         />

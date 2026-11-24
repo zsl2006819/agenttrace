@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import {
-  ShieldCheck,
+  Shield,
   AlertTriangle,
   CheckCircle2,
   Loader2,
@@ -99,15 +99,23 @@ export default function SecurityPage() {
           </>
         ) : (
           <>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-500">
-              <ShieldCheck className="h-6 w-6" strokeWidth={1.75} />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <Shield className="h-6 w-6" strokeWidth={1.75} />
             </div>
-            <div className="border-l border-emerald-100 pl-4">
-              <h3 className="font-semibold text-emerald-700">System Protected</h3>
-              <p className="mt-0.5 text-emerald-600 text-[12px]">
-                All guardrail rules are active. No active threats detected.
+            <div className="border-l border-blue-100 pl-4">
+              <h3 className="font-semibold text-blue-700">Recommended guardrails available</h3>
+              <p className="mt-0.5 text-blue-600 text-[12px]">
+                Enable them to protect your agents from destructive actions.
               </p>
             </div>
+            <Button
+              onClick={() => setOpen(true)}
+              size="sm"
+              className="ml-auto rounded-lg bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+            >
+              <Plus className="mr-2 h-4 w-4" strokeWidth={1.75} />
+              Enable All Recommended
+            </Button>
           </>
         )}
       </section>
@@ -136,6 +144,9 @@ export default function SecurityPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-slate-900 text-sm">
                       {rule.name}
+                    </span>
+                    <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 rounded px-1 py-0.5 uppercase tracking-tighter ml-1.5">
+                      [Recommended]
                     </span>
                     <span className="text-xs font-mono text-slate-500 bg-slate-50 rounded px-1.5 py-0.5">
                       {rule.condition}

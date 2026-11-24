@@ -3,6 +3,7 @@
 import {
   AlertTriangle,
   Bot,
+  Plug,
   ShieldCheck,
   Zap,
   Terminal,
@@ -121,15 +122,15 @@ export function EventLogsSection({
       )}
 
       {totalEvents === 0 && (
-        <section className="mt-8 rounded-xl border border-slate-200/80 bg-white p-8 shadow-sm text-center">
-          <Terminal className="mx-auto mb-4 h-10 w-10 text-slate-400" />
+        <section className="mt-8 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-12 shadow-sm text-center">
+          <Plug className="mx-auto mb-4 h-12 w-12 text-slate-300" />
           <h3 className="text-lg font-semibold text-slate-900 mb-2">
             No audit events yet
           </h3>
           <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto leading-relaxed">
             Start sending events to see your audit trail and AI insights.
           </p>
-          <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-sm max-w-md mx-auto mb-4">
+          <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-sm max-w-md mx-auto mb-6">
             <div className="flex items-center gap-1 px-3 py-1.5 bg-slate-800 border-b border-slate-700">
               <span className="h-2 w-2 rounded-full bg-red-500" />
               <span className="h-2 w-2 rounded-full bg-yellow-500" />
