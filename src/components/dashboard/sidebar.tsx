@@ -33,10 +33,10 @@ const itemBase =
   'flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors';
 
 const itemActive =
-  'bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 border-l-2 border-l-zinc-900 dark:border-l-zinc-100';
+  'bg-zinc-100 font-medium text-zinc-900 border-l-2 border-l-black';
 
 const itemIdle =
-  'text-zinc-500 hover:bg-zinc-100/70 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-100';
+  'text-zinc-500 hover:bg-zinc-100/70 hover:text-zinc-900';
 
 export function DashboardSidebar({ email }: { email: string | null }) {
   const pathname = usePathname();
@@ -45,7 +45,7 @@ export function DashboardSidebar({ email }: { email: string | null }) {
   return (
     <aside
       className={cn(
-        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-zinc-200/70 bg-zinc-50/60 transition-[width] duration-200 dark:border-zinc-800 dark:bg-zinc-900/40',
+        'sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-zinc-200/70 bg-zinc-50/60 transition-[width] duration-200',
         collapsed ? 'w-14' : 'w-60'
       )}
     >
@@ -56,11 +56,11 @@ export function DashboardSidebar({ email }: { email: string | null }) {
           className="flex min-w-0 items-center gap-2.5"
           aria-label="AgentTrace"
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-[11px] font-semibold tracking-tight text-white dark:bg-zinc-100 dark:text-zinc-900">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-[11px] font-semibold tracking-tight text-white">
             AT
           </span>
           {!collapsed && (
-            <span className="truncate text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+            <span className="truncate text-sm font-semibold tracking-tight text-zinc-900">
               AgentTrace
             </span>
           )}
@@ -87,53 +87,52 @@ export function DashboardSidebar({ email }: { email: string | null }) {
       </nav>
 
       {/* Footer */}
-      <div className="shrink-0 border-t border-zinc-200/70 p-2 dark:border-zinc-800">
-        <div className="space-y-0.5">
-          <Link
-            href="/docs"
-            title={collapsed ? 'Documentation' : undefined}
-            className={cn(itemBase, itemIdle)}
-          >
-            <BookOpen className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-            {!collapsed && <span className="truncate">Documentation</span>}
-          </Link>
-
-          <form action="/auth/signout" method="POST">
-            <button
-              type="submit"
-              title={collapsed ? 'Sign Out' : undefined}
-              className={cn(itemBase, itemIdle, 'w-full text-left')}
+        <div className="shrink-0 border-t border-zinc-200/70 p-2">
+          <div className="space-y-0.5">
+            <Link
+              href="/docs"
+              title={collapsed ? 'Documentation' : undefined}
+              className={cn(itemBase, itemIdle)}
             >
-              <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-              {!collapsed && <span>Sign Out</span>}
-            </button>
-          </form>
-        </div>
+              <BookOpen className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+              {!collapsed && <span className="truncate">Documentation</span>}
+            </Link>
 
-        {/* Account + collapse */}
-        <div className="mt-2 flex items-center gap-2 border-t border-zinc-200/70 px-1 pt-2 dark:border-zinc-800">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-semibold uppercase text-white dark:bg-zinc-100 dark:text-zinc-900">
-            {(email ?? '?').charAt(0)}
-          </span>
+            <form action="/auth/signout" method="POST">
+              <button
+                type="submit"
+                title={collapsed ? 'Sign Out' : undefined}
+                className={cn(itemBase, itemIdle, 'w-full text-left')}
+              >
+                <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+                {!collapsed && <span>Sign Out</span>}
+              </button>
+            </form>
+          </div>
 
-          {!collapsed && email && (
-            <span
-              className="min-w-0 flex-1 truncate text-xs text-zinc-500 dark:text-zinc-400"
-              title={email}
-            >
-              {email}
+          <div className="mt-2 flex items-center gap-2 border-t border-zinc-200/70 px-1 pt-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-semibold uppercase text-white">
+              {(email ?? '?').charAt(0)}
             </span>
-          )}
 
-          <button
-            type="button"
-            onClick={() => setCollapsed((value) => !value)}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className={cn(
-              'rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
-              !collapsed && 'ml-auto'
+            {!collapsed && email && (
+              <span
+                className="min-w-0 flex-1 truncate text-xs text-zinc-500"
+                title={email}
+              >
+                {email}
+              </span>
             )}
-          >
+
+            <button
+              type="button"
+              onClick={() => setCollapsed((value) => !value)}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className={cn(
+                'rounded-md p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700',
+                !collapsed && 'ml-auto'
+              )}
+            >
             {collapsed ? (
               <ChevronsRight className="h-3.5 w-3.5" strokeWidth={2} />
             ) : (

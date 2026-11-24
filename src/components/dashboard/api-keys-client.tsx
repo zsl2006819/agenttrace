@@ -201,7 +201,7 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
                         onClick={() => handleRevoke(k.id)}
                         disabled={revokingId === k.id}
                         className={cn(
-                          'border-zinc-200 text-zinc-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:border-zinc-700 dark:text-zinc-500 dark:hover:bg-red-950/40 dark:hover:text-red-400 dark:hover:border-red-800',
+                          'border border-slate-200 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50',
                           revokingId === k.id && 'opacity-50 pointer-events-none'
                         )}
                       >

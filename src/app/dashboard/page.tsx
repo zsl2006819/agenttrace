@@ -138,16 +138,16 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10 md:px-10">
+    <div className="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
       <DashboardRefresher initialPlan={plan} />
 
       {/* Header */}
-      <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             Audit Logs
           </h1>
-          <p className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
             A tamper-evident record of every tool call made by your agents.
           </p>
         </div>
@@ -159,24 +159,24 @@ export default async function DashboardPage() {
       </div>
 
       {/* KPI cards */}
-        <div className="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-zinc-200/50 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800/50 dark:bg-zinc-900">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-1.5">
+      <div className="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
             Total Events
           </p>
-          <p className="text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
+          <p className="text-3xl font-medium tabular-nums text-slate-900">
             {(totalEventsCount ?? 0).toLocaleString('en-US')}
           </p>
         </div>
-        <div className="rounded-xl border border-zinc-200/50 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800/50 dark:bg-zinc-900">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-1.5">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
             Quota Used
           </p>
-          <div className="mb-1.5 text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
+          <div className="mb-1.5 text-3xl font-medium tabular-nums text-slate-900">
             {usedThisMonth.toLocaleString('en-US')} /{' '}
             {apiLimit.toLocaleString('en-US')}
           </div>
-          <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-slate-200">
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-500',
@@ -184,56 +184,53 @@ export default async function DashboardPage() {
                   ? 'bg-red-500'
                   : usedThisMonth / apiLimit >= 0.8
                     ? 'bg-amber-500'
-                    : 'bg-zinc-900 dark:bg-zinc-100'
+                    : 'bg-slate-900'
               )}
               style={{ width: `${Math.min(100, (usedThisMonth / apiLimit) * 100)}%` }}
             />
           </div>
         </div>
-        <div className="rounded-xl border border-zinc-200/50 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800/50 dark:bg-zinc-900">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-1.5">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">
             Active Keys
           </p>
-          <p className="text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
+          <p className="text-3xl font-medium tabular-nums text-slate-900">
             {(activeKeysCount ?? 0).toLocaleString('en-US')}
           </p>
         </div>
-        <div className="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md hover:border-emerald-200 dark:border-emerald-900/30 dark:bg-zinc-900">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex flex-col h-full">
           <div className="flex items-center justify-between">
-            <div className="relative">
-              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 100 100">
+            <div className="relative w-16 h-16">
+              <svg className="w-full h-full" viewBox="0 0 100 100">
                 <circle
                   cx="50"
                   cy="50"
-                  r="42"
-                  stroke="emerald-100"
+                  r="45"
+                  stroke="slate-100"
                   strokeWidth="8"
                   fill="transparent"
-                  className="dark:stroke-emerald-900/30"
                 />
                 <circle
                   cx="50"
                   cy="50"
-                  r="42"
+                  r="45"
                   stroke="emerald-600"
                   strokeWidth="8"
                   fill="transparent"
-                  className="dark:stroke-emerald-400"
-                  strokeDasharray="264"
-                  strokeDashoffset={5.28}
+                  strokeDasharray="283"
+                  strokeDashoffset={5.66}
                   strokeLinecap="round"
-                  style={{ transition: 'stroke-dashoffset 0.5s ease' }}
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-3xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400 leading-none drop-shadow-sm">98</p>
+                <p className="text-3xl font-bold tabular-nums text-emerald-600 leading-none">98</p>
               </div>
             </div>
             <div>
-              <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+              <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
                 Trust Score
               </p>
-              <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+              <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
                 Excellent
               </p>
             </div>
@@ -249,16 +246,16 @@ export default async function DashboardPage() {
 
       {/* Free plan upgrade banner */}
       {isFree && (
-        <div className="mb-8 flex flex-col gap-3 rounded-xl bg-zinc-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:bg-zinc-900/60">
-          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">
+        <div className="mb-8 flex flex-col gap-3 rounded-xl bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm leading-relaxed text-slate-600">
+            <span className="font-medium text-slate-900">
               You are on the Free plan.
             </span>{' '}
             Upgrade to unlock API limits and PDF exports.
           </p>
           <a
             href="/#pricing"
-            className="shrink-0 self-start rounded-lg bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 sm:self-auto"
+            className="shrink-0 self-start rounded-lg bg-slate-900 px-3.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-slate-800 sm:self-auto"
           >
             Upgrade now
           </a>
@@ -266,7 +263,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Disclaimer */}
-      <p className="mt-10 text-center text-xs leading-relaxed text-zinc-400 dark:text-zinc-500">
+      <p className="mt-10 text-center text-xs leading-relaxed text-slate-400">
         AgentTrace provides technical infrastructure only and does not constitute
         formal legal advice.
       </p>

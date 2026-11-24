@@ -224,18 +224,35 @@ interface ClickableRowProps {
 }
 
 export function EventLogsRow({ record, onSelect }: ClickableRowProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyId = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(record.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <button
       onClick={() => onSelect(record)}
       className="w-full text-left transition-all duration-200 group"
     >
-      <tr className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/70 h-14">
-        <td className="px-6 align-middle text-xs font-mono text-zinc-600 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
-          <span className="rounded bg-zinc-100 px-1.5 py-0.5 dark:bg-zinc-800/40">
+      <tr className="border-b border-slate-200 last:border-0 h-16">
+        <td className="px-6 align-middle">
+          <span
+            onClick={handleCopyId}
+            className="cursor-pointer font-mono text-xs text-slate-600 bg-slate-100 rounded px-1.5 py-0.5 hover:bg-slate-200 transition-colors"
+          >
             {record.id.substring(0, 8)}
           </span>
+          {copied && (
+            <span className="ml-1 text-[10px] text-emerald-600 font-medium">
+              Copied
+            </span>
+          )}
         </td>
-        <td className="px-6 align-middle text-xs font-mono tabular-nums text-zinc-600 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+        <td className="px-6 align-middle text-sm text-slate-600 tabular-nums">
           {new Date(record.created_at).toLocaleString('en-US', {
             month: '2-digit',
             day: '2-digit',
@@ -244,26 +261,26 @@ export function EventLogsRow({ record, onSelect }: ClickableRowProps) {
             second: '2-digit',
           })}
         </td>
-        <td className="px-6 align-middle text-[13px] text-zinc-600 dark:text-zinc-400">
+        <td className="px-6 align-middle text-sm text-slate-600">
           {record.agent_id}
         </td>
-        <td className="px-6 align-middle text-[13px] text-zinc-600 dark:text-zinc-400">
+        <td className="px-6 align-middle text-sm text-slate-600">
           {record.tool_name}
         </td>
-        <td className="px-6 align-middle text-xs font-mono tabular-nums text-zinc-600 dark:text-zinc-500">
+        <td className="px-6 align-middle text-xs font-mono tabular-nums text-slate-600">
           {record.sequence}
         </td>
         <td className="px-6 align-middle">
-          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1.5 text-xs text-slate-600">
             <span
               aria-hidden
-              className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+              className="w-1.5 h-1.5 rounded-full bg-emerald-600"
             />
             Verified
           </span>
         </td>
         <td className="px-6 align-middle text-right opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <ChevronRight className="h-3 w-3 text-zinc-400" />
+          <ChevronRight className="h-3 w-3 text-slate-400" />
         </td>
       </tr>
     </button>

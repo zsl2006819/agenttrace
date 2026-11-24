@@ -61,50 +61,50 @@ export function EventLogsSection({
       </section>
 
       {/* AI Insights Panel */}
-      <section className="rounded-xl border border-zinc-100 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50">
+      <section className="rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-6">
-          <Bot className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
+          <Bot className="h-4 w-4 text-slate-500" />
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">
             AI Insights
           </h3>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div
-            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3 group border-l-2 border-emerald-500"
+            className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 shadow-sm flex gap-3 group border-l-2 border-emerald-500"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
               <ShieldCheck className="h-5 w-5" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed">
-                Guardrail blocked <span className="font-medium text-zinc-900 dark:text-zinc-100">3 attempts</span> to access{' '}
-                <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">drop_table</span> today.
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Guardrail blocked <span className="font-medium text-slate-900">3 attempts</span> to access{' '}
+                <span className="font-mono text-xs text-slate-500">drop_table</span> today.
               </p>
             </div>
           </div>
           <div
-            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3 group border-l-2 border-amber-500"
+            className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 shadow-sm flex gap-3 group border-l-2 border-amber-500"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
               <AlertTriangle className="h-5 w-5" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed">
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">Agent [agent-demo]</span> has a{' '}
+              <p className="text-sm text-slate-600 leading-relaxed">
+                <span className="font-medium text-slate-900">Agent [agent-demo]</span> has a{' '}
                 <span className="font-medium text-amber-600">30% higher error rate</span> than usual.
               </p>
             </div>
           </div>
           <div
-            className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/40 flex gap-3 group border-l-2 border-zinc-500"
+            className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 shadow-sm flex gap-3 group border-l-2 border-slate-500"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-50 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-600">
               <Zap className="h-5 w-5" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 Recommendation: Consider rotating the API Key used by{' '}
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">agent-qa</span>.
+                <span className="font-medium text-slate-900">agent-qa</span>.
               </p>
             </div>
           </div>

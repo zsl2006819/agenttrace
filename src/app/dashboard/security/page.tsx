@@ -80,12 +80,12 @@ export default function SecurityPage() {
       <section className="mb-8 rounded-xl p-6 flex items-center gap-4 text-sm shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:shadow-none border">
         {hasRisk ? (
           <>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50/50 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50/50 text-amber-700">
               <AlertTriangle className="h-6 w-6" strokeWidth={1.75} />
             </div>
-            <div className="border-l border-red-100 pl-4 dark:border-red-900/30">
-              <h3 className="font-semibold text-red-700 dark:text-red-400">High Risk Detected</h3>
-              <p className="mt-0.5 text-red-600 dark:text-red-400/90 text-[12px]">
+            <div className="border-l border-amber-200 pl-4">
+              <h3 className="font-semibold text-amber-700">High Risk Detected</h3>
+              <p className="mt-0.5 text-amber-600 text-[12px]">
                 2 active guardrail rules are blocking potentially unsafe agent operations.
               </p>
             </div>
@@ -105,10 +105,10 @@ export default function SecurityPage() {
         )}
       </section>
 
-      {/* Rules table */}
-      <section className="rounded-xl border border-zinc-100 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
-        <div className="border-b border-zinc-100 bg-zinc-50 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex items-center justify-between">
-          <h3 className="text-[12px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+      {/* Rules */}
+      <section className="rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider">
             Interception Rules
           </h3>
           <Button onClick={() => setOpen(true)} size="sm" className="rounded-lg">
@@ -116,110 +116,92 @@ export default function SecurityPage() {
             Create Rule
           </Button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left divide-y divide-zinc-100 dark:divide-zinc-800">
-            <thead>
-              <tr className="bg-zinc-50/50 dark:bg-zinc-900/30">
-                <th className="px-6 py-3 text-[11px] font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-400">
-                  Rule Name
-                </th>
-                <th className="px-6 py-3 text-[11px] font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-400">
-                  Condition
-                </th>
-                <th className="px-6 py-3 text-[11px] font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-400">
-                  Action
-                </th>
-                <th className="px-6 py-3 text-[11px] font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-400">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-[11px] font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-400 text-right">
-                  </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {RULES.map((rule) => {
-                const actionStyle = ACTION_LABELS[rule.action];
-                const statusStyle = STATUS_LABELS[rule.status];
-                return (
-                  <tr key={rule.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+        <div className="space-y-2">
+          {RULES.map((rule) => {
+            const actionStyle = ACTION_LABELS[rule.action];
+            const statusStyle = STATUS_LABELS[rule.status];
+            return (
+              <div
+                key={rule.id}
+                className="rounded-lg border border-slate-200/50 bg-white p-4 flex items-center justify-between transition-colors hover:bg-slate-50"
+              >
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-slate-900 text-sm">
                       {rule.name}
-                    </td>
-                    <td className="px-6 py-4 font-mono text-sm tabular-nums text-zinc-600 dark:text-zinc-500">
+                    </span>
+                    <span className="text-xs font-mono text-slate-500 bg-slate-50 rounded px-1.5 py-0.5">
                       {rule.condition}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-sm px-2 py-1 text-[10px] font-semibold ${actionStyle.color} ${actionStyle.bg}`}>
-                        {rule.action}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-sm px-2 py-1 text-[10px] font-semibold ${statusStyle.color} ${statusStyle.bg}`}>
-                        {rule.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors" aria-label="Delete rule">
-                        <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center rounded-sm px-2 py-1 text-[10px] font-semibold ${actionStyle.color} ${actionStyle.bg}`}>
+                    {rule.action}
+                  </span>
+                  <span className={`inline-flex items-center rounded-sm px-2 py-1 text-[10px] font-semibold ${statusStyle.color} ${statusStyle.bg}`}>
+                    {rule.status}
+                  </span>
+                  <button
+                    className="text-slate-400 hover:text-slate-600 transition-colors"
+                    aria-label="Delete rule"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <div className="border-t border-zinc-100 bg-zinc-50 px-6 py-3 dark:border-zinc-800 dark:bg-zinc-900/50 text-[12px] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-4 text-[10px] text-slate-400">
           Rules are evaluated in order. First match wins.
-        </div>
+        </p>
       </section>
 
       {/* Notifications Module */}
-      <section className="mt-8 rounded-xl border border-zinc-100 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
-        <div className="border-b border-zinc-100 bg-zinc-50 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900/50 flex items-center justify-between">
+      <section className="mt-8 rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-zinc-500 dark:text-zinc-400" strokeWidth={1.75} />
-            <h3 className="text-[12px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            <Zap className="h-4 w-4 text-slate-500" strokeWidth={1.75} />
+            <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Notifications
             </h3>
           </div>
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">Alert delivery</p>
+          <p className="text-[10px] text-slate-400">Alert delivery</p>
         </div>
-        <div className="p-6">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
-            When a guardrail rule triggers a block, AgentTrace sends an alert to your
-            configured endpoint. Enter a Slack Webhook URL or Email address.
+        <p className="text-xs text-slate-500 mb-4">
+          When a guardrail rule triggers a block, AgentTrace sends an alert to your
+          configured endpoint. Enter a Slack Webhook URL or Email address.
+        </p>
+        <div className="space-y-3">
+          <div className="space-y-2">
+            <Label htmlFor="notifyUrl">Endpoint URL</Label>
+            <Input
+              id="notifyUrl"
+              type="url"
+              placeholder="https://hooks.slack.com/services/..."
+              defaultValue=""
+              className="bg-slate-50 focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {}}
+              size="sm"
+              className="rounded-lg bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+            >
+              Save Endpoint
+            </Button>
+            <Button variant="outline" size="sm" className="rounded-lg">
+              Test Connection
+            </Button>
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-slate-200/50">
+          <p className="text-[10px] text-slate-400">
+            No notifications saved yet. Alerts will be posted to this endpoint when
+            a rule is triggered.
           </p>
-          <div className="space-y-3">
-            <div className="space-y-2">
-              <Label htmlFor="notifyUrl">Endpoint URL</Label>
-              <Input
-                id="notifyUrl"
-                type="url"
-                placeholder="https://hooks.slack.com/services/..."
-                defaultValue=""
-                className="bg-zinc-50 dark:bg-zinc-900 focus:ring-zinc-900"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => {}}
-                size="sm"
-                className="rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-              >
-                Save Endpoint
-              </Button>
-              <Button variant="outline" size="sm" className="rounded-lg">
-                Test Connection
-              </Button>
-            </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
-            <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
-              No notifications saved yet. Alerts will be posted to this endpoint when
-              a rule is triggered.
-            </p>
-          </div>
         </div>
       </section>
 

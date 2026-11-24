@@ -53,16 +53,11 @@ export function ChainIntegrityBanner() {
     <section className="mb-8">
       <div
         className={cn(
-          'relative overflow-hidden rounded-xl border border-zinc-200/50 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-300 hover:shadow-md hover:shadow-zinc-900/5 dark:border-zinc-800/50 dark:bg-zinc-900',
-          isValid === true && 'border-emerald-100 bg-emerald-50/40 dark:border-emerald-900/20 dark:bg-emerald-900/10',
-          isValid === false && 'border-amber-100 bg-amber-50/40 dark:border-amber-900/20 dark:bg-amber-900/10'
+          'relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-6 shadow-sm',
+          isValid === true && 'border-emerald-100 bg-emerald-50/40',
+          isValid === false && 'border-amber-100 bg-amber-50/40'
         )}
       >
-        {/* Glow behind shield when valid */}
-        {isValid === true && (
-          <div className="absolute -top-1/2 -left-1/2 w-full h-full blur-[120px] bg-emerald-500/10 rounded-full" />
-        )}
-
         {/* Hash chain visualization */}
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           {/* Left: Icon + text */}
@@ -71,18 +66,18 @@ export function ChainIntegrityBanner() {
               'flex h-12 w-12 items-center justify-center rounded-xl shadow-sm transition-transform duration-300 group-hover:scale-110',
               isValid === true
                 ? 'bg-emerald-100 text-emerald-600 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300'
+                : 'bg-slate-100 text-slate-600'
             )}>
               <Icon className="h-6 w-6" strokeWidth={2} />
             </div>
 
             <div>
-              <div className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                Chain Integrity: <span className={cn(isValid === true ? 'text-emerald-600' : 'text-zinc-900')}>
+              <div className="text-lg font-bold tracking-tight text-slate-900">
+                Chain Integrity: <span className={cn(isValid === true ? 'text-emerald-600' : 'text-slate-900')}>
                   Verified ({isValid === true ? '100%' : result?.checked ?? 0})
                 </span>
               </div>
-              <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 text-sm text-slate-500">
                 All records are cryptographically linked and untampered.
               </p>
             </div>
@@ -97,54 +92,54 @@ export function ChainIntegrityBanner() {
               preserveAspectRatio="none"
             >
               <defs>
-                <linearGradient id="chain-gradient" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%" stopColor="zinc-900" stopOpacity={0.8} />
-                  <stop offset="100%" stopColor="zinc-600" stopOpacity={0.5} />
-                </linearGradient>
-                <filter id="shield-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                  <polygon points="0 0, 5 3.5, 0 7" fill="slate-400" className="dark:fill-slate-600" />
+                </marker>
               </defs>
 
-              {/* Connecting thin lines */}
-              <line x1="90" y1="24" x2="230" y2="24" stroke="zinc-200" strokeWidth={1} className="dark:stroke-zinc-800/50" />
-              <line x1="330" y1="24" x2="470" y2="24" stroke="zinc-200" strokeWidth={1} className="dark:stroke-zinc-800/50" />
-              <line x1="570" y1="24" x2="710" y2="24" stroke="zinc-200" strokeWidth={1} className="dark:stroke-zinc-800/50" />
+              {/* Connecting dashed lines with arrows */}
+              <path
+                d="M105 24 L215 24 M345 24 L455 24 M585 24 L695 24"
+                stroke="slate-300"
+                strokeWidth={1}
+                strokeDasharray="4"
+                fill="none"
+                marker-end="url(#arrowhead)"
+                className="dark:stroke-slate-700/50"
+              />
 
               {/* Nodes */}
               {HASH_NODES.map((hash, i) => {
                 const cx = 160 + i * 240;
                 return (
                   <g key={hash}>
-                    <rect
-                      x={cx - 22}
-                      y={14}
-                      width={44}
-                      height={20}
-                      rx={6}
-                      fill="zinc-900"
-                      className="dark:fill-zinc-100"
-                    />
-                    <rect
-                      x={cx - 24}
-                      y={12}
-                      width={48}
-                      height={24}
-                      rx={8}
+                    <circle
+                      cx={cx}
+                      cy={24}
+                      r={14}
                       fill="none"
-                      stroke="zinc-400"
-                      strokeWidth={1}
-                      className="dark:stroke-zinc-600/50"
+                      stroke="slate-300"
+                      strokeWidth={1.5}
+                      className="dark:stroke-slate-700"
                     />
                     <text
                       x={cx}
-                      y={24}
-                      fill="zinc-300"
-                      fontSize="10"
+                      y={28}
+                      fill="slate-600"
+                      fontSize="9"
                       fontFamily="monospace"
-                      fontWeight="600"
-                      className="dark:fill-zinc-500"
+                      fontWeight="700"
+                      className="dark:fill-slate-400"
+                      textAnchor="middle"
+                    >
+                      {i + 1}
+                    </text>
+                    <text
+                      x={cx}
+                      y={40}
+                      fill="slate-400"
+                      fontSize="9"
+                      fontFamily="monospace"
                       textAnchor="middle"
                     >
                       {hash}
@@ -155,16 +150,8 @@ export function ChainIntegrityBanner() {
 
               {/* Final node: Shield Check */}
               <g transform="translate(780, 24)">
-                <circle r={24} fill="none" stroke="emerald-500" strokeWidth={2} opacity={0.3} />
-                <circle r={20} fill="emerald-500" filter="url(#shield-glow)" />
-                <path
-                  d="M-5 -5 L2 3 L8 -5"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <circle r={14} fill="none" stroke="emerald-600" strokeWidth={1.5} />
+                <ShieldCheck className="h-4 w-4 text-emerald-600" strokeWidth={1.5} />
               </g>
             </svg>
           </div>
@@ -177,8 +164,8 @@ export function ChainIntegrityBanner() {
             className={cn(
               'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98]',
               isValid === true
-                ? 'bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200'
-                : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-300 dark:hover:bg-emerald-800'
+                ? 'bg-slate-900 text-white shadow-sm hover:bg-slate-800'
+                : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
             )}
           >
             {verifying ? (
@@ -193,8 +180,8 @@ export function ChainIntegrityBanner() {
             <span className={cn(
               'inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-semibold uppercase tracking-wider',
               isValid === true
-                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
-                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-amber-100 text-amber-700'
             )}>
               {isValid === true ? <CheckCircle2 className="h-3 w-3" strokeWidth={2} /> : <AlertCircle className="h-3 w-3" strokeWidth={2} />}
               {isValid === true ? 'Intact' : 'Broken'}
@@ -205,7 +192,7 @@ export function ChainIntegrityBanner() {
         {result && !verifying && (
           <div className="mt-4 flex items-start gap-2 px-1">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" strokeWidth={1.75} />
-            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            <p className="text-sm leading-relaxed text-slate-600">
               {result.message} ({result.checked} record(s) checked)
             </p>
           </div>
