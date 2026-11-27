@@ -89,11 +89,11 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10 md:px-10">
+    <div className="mx-auto max-w-[1200px] px-6 py-10 md:px-10">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             API Keys
           </h1>
           <p className="mt-1.5 text-sm leading-relaxed text-slate-500">

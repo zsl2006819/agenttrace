@@ -127,7 +127,7 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10 md:px-8">
+    <div className="mx-auto max-w-[1200px] px-6 py-10 md:px-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Settings

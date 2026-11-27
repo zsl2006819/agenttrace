@@ -101,7 +101,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       signature,
     } = body;
 
-    // 3) 幂等检查（先于额度检查：重放同一事件不算新的写入）
+    // 3.5) 防火墙拦截逻辑：在写入前检查安全规则
+    // 查询当前租户的启用 Block 规则，按 tool_name 匹配
+    const { data: blockRules, error: rulesError } = await service
+      .from('security_rules')
+      .select('id, name, target_tool')
+      .eq('tenant_id', tenantId)
+      .eq('status', 'Active')
+      .eq('action', 'Block')
+      .eq('target_tool', tool_name)
+      .limit(1);
+
+    if (rulesError) {
+      console.error('Failed to check security rules:', rulesError);
+      // 不阻塞主流程，记录错误但继续
+    } else if (blockRules && blockRules.length > 0) {
+      const matchedRule = blockRules[0];
+      // 返回 403 Forbidden，不写入数据库
+      return NextResponse.json(
+        {
+          error: 'Agent action blocked by security policy',
+          rule: matchedRule.name,
+        },
+        { status: 403 }
+      );
+    }
+
+    // 4) 幂等检查（先于额度检查：重放同一事件不算新的写入）
     const { data: existingRecord, error: selectError } = await service
       .from('audit_events')
       .select('*')

@@ -12,6 +12,8 @@ import {
   BookOpen,
   ChevronsLeft,
   ChevronsRight,
+  Users,
+  ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,7 +21,13 @@ const NAV_ITEMS = [
   { href: '/dashboard', label: 'Audit Logs', icon: ScrollText },
   { href: '/dashboard/security', label: 'Security', icon: ShieldAlert },
   { href: '/dashboard/api-keys', label: 'API Keys', icon: KeyRound },
+  { href: '/dashboard/team', label: 'Team', icon: Users },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+];
+
+const FOOTER_LINKS = [
+  { href: '/docs', label: 'Documentation', icon: BookOpen },
+  { href: '/trust', label: 'Trust Center', icon: ShieldCheck },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -89,14 +97,20 @@ export function DashboardSidebar({ email }: { email: string | null }) {
       {/* Footer */}
         <div className="shrink-0 border-t border-zinc-200/70 p-2">
           <div className="space-y-0.5">
-            <Link
-              href="/docs"
-              title={collapsed ? 'Documentation' : undefined}
-              className={cn(itemBase, itemIdle)}
-            >
-              <BookOpen className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-              {!collapsed && <span className="truncate">Documentation</span>}
-            </Link>
+            {FOOTER_LINKS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={collapsed ? item.label : undefined}
+                  className={cn(itemBase, itemIdle)}
+                >
+                  <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+                  {!collapsed && <span className="truncate">{item.label}</span>}
+                </Link>
+              );
+            })}
 
             <form action="/auth/signout" method="POST">
               <button

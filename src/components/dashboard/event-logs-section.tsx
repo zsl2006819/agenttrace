@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   AlertTriangle,
   Bot,
@@ -7,6 +8,8 @@ import {
   ShieldCheck,
   Zap,
   Terminal,
+  Loader2,
+  Database,
 } from 'lucide-react';
 import { EventVolumeSparkline } from './event-volume-sparkline';
 import { Button } from '@/components/ui/button';
@@ -46,6 +49,28 @@ export function EventLogsSection({
   dailyCounts: Array<{ date: string; count: number }>;
   totalEvents: number;
 }) {
+  const [loadingDemo, setLoadingDemo] = useState(false);
+
+  const handleLoadDemo = async () => {
+    setLoadingDemo(true);
+    try {
+      const res = await fetch('/api/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to load demo data');
+      }
+      // Reload the page to show the new data
+      window.location.reload();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to load demo data');
+    } finally {
+      setLoadingDemo(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Event Volume Sparkline */}
@@ -148,9 +173,28 @@ export function EventLogsSection({
               ))}
             </div>
           </div>
-          <Button size="sm" className="rounded-lg">
-            Copy Integration Code
-          </Button>
+          <div className="flex items-center justify-center gap-3">
+            <Button size="sm" className="rounded-lg">
+              Copy Integration Code
+            </Button>
+            <Button
+              onClick={handleLoadDemo}
+              disabled={loadingDemo}
+              className="rounded-lg bg-slate-900 text-white shadow-sm hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]"
+            >
+              {loadingDemo ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <Database className="mr-2 h-4 w-4" />
+                  Load Demo Data
+                </>
+              )}
+            </Button>
+          </div>
         </section>
       )}
     </div>

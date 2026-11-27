@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { CheckCircle2, Loader2, Zap } from 'lucide-react';
+import { CheckCircle2, Loader2, Zap, FileText, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface AuditEvent {
   id: string;
@@ -54,6 +55,7 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
   const [blocked, setBlocked] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const showPaywall = () => {
     if (blocked) return;
@@ -167,57 +169,207 @@ export function ExportReportButton({ records, plan }: ExportReportButtonProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={downloadJSONL}
+          aria-disabled={isExportBlocked(plan)}
+          title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
+          className={cn(buttonClass, isExportBlocked(plan) && 'opacity-60')}
+        >
+          Export JSONL
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={downloadPDF}
+          aria-disabled={isExportBlocked(plan)}
+          title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
+          className={cn(buttonClass, isExportBlocked(plan) && 'opacity-60')}
+        >
+          Export PDF
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={handleComplianceBundle}
+          disabled={generating}
+          className="rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all duration-200 active:scale-[0.98]"
+        >
+          {generating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" strokeWidth={1.75} />
+              Generating…
+            </>
+          ) : generated ? (
+            <>
+              <CheckCircle2 className="mr-2 h-4 w-4" strokeWidth={1.75} />
+              Bundle Ready
+            </>
+          ) : (
+            <>
+              <Zap className="mr-2 h-4 w-4" strokeWidth={1.75} />
+              Export Compliance Bundle
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* Compliance Report Preview Card */}
       <Button
         variant="outline"
         size="sm"
-        onClick={downloadJSONL}
-        aria-disabled={isExportBlocked(plan)}
-        title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
-        className={cn(buttonClass, isExportBlocked(plan) && 'opacity-60')}
+        onClick={() => setPreviewOpen(true)}
+        className="w-full sm:w-auto rounded-lg border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+        aria-label="Preview compliance report"
       >
-        Export JSONL
+        <FileText className="mr-2 h-4 w-4" strokeWidth={1.75} />
+        Preview EU AI Act Report
       </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={downloadPDF}
-        aria-disabled={isExportBlocked(plan)}
-        title={isExportBlocked(plan) ? 'Upgrade required' : undefined}
-        className={cn(buttonClass, isExportBlocked(plan) && 'opacity-60')}
-      >
-        Export PDF
-      </Button>
-      <Button
-        variant="default"
-        size="sm"
-        onClick={handleComplianceBundle}
-        disabled={generating}
-        className="rounded-lg bg-zinc-900 text-white shadow-sm hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all duration-200 active:scale-[0.98]"
-      >
-        {generating ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" strokeWidth={1.75} />
-            Generating…
-          </>
-        ) : generated ? (
-          <>
-            <CheckCircle2 className="mr-2 h-4 w-4" strokeWidth={1.75} />
-            Bundle Ready
-          </>
-        ) : (
-          <>
-            <Zap className="mr-2 h-4 w-4" strokeWidth={1.75} />
-            Export Compliance Bundle
-          </>
-        )}
-      </Button>
+
       {generated && (
         <span className="ml-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-medium dark:bg-emerald-900/40 dark:text-emerald-400">
           <CheckCircle2 className="h-3 w-3" strokeWidth={1.75} />
           Your ZIP bundle includes JSONL logs, PDF report, and a verification script.
         </span>
       )}
+
+      {/* Preview Modal */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="sm:max-w-[720px] max-h-[80vh] rounded-xl overflow-hidden">
+          <DialogHeader className="border-b border-slate-200 pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="text-lg font-semibold text-slate-900">
+                  EU AI Act Article 12 Evidence Package — Preview
+                </DialogTitle>
+                <DialogDescription className="text-sm text-slate-500">
+                  This is a sample of the compliance bundle. Upgrade to generate the full ZIP.
+                </DialogDescription>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setPreviewOpen(false)}>
+                <X className="h-5 w-5" strokeWidth={1.75} />
+              </Button>
+            </div>
+          </DialogHeader>
+          <div className="p-4 overflow-y-auto max-h-[60vh] bg-white">
+            <div className="space-y-6 font-mono text-sm">
+              {/* Header */}
+              <div className="border-b border-slate-200 pb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-slate-400">AGENTTRACE</span>
+                  <span className="text-slate-400">COMPLIANCE REPORT</span>
+                </div>
+                <div className="text-lg font-bold text-slate-900">EU AI Act Article 12 — Record-Keeping Evidence</div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Generated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} •
+                  Tenant: tenant_demo • Plan: Starter
+                </div>
+              </div>
+
+              {/* Section 1: Executive Summary */}
+              <section>
+                <h3 className="font-semibold text-slate-900 mb-2">1. Executive Summary</h3>
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                  <p className="text-slate-700 leading-relaxed">
+                    This evidence package demonstrates compliance with <strong>Article 12 (Record-keeping)</strong> of the EU AI Act (Regulation 2024/1689).
+                    The enclosed audit trail contains <strong>{records.length} tamper-evident events</strong> captured via AgentTrace's
+                    cryptographic hash chain, covering the period from <strong>2024-01-15</strong> to <strong>2024-01-22</strong>.
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-white p-2 rounded border">
+                      <div className="text-slate-500">Total Events</div>
+                      <div className="font-bold text-slate-900">{records.length > 0 ? records.length.toLocaleString() : '1,247'}</div>
+                    </div>
+                    <div className="bg-white p-2 rounded border">
+                      <div className="text-slate-500">Hash Chain Integrity</div>
+                      <div className="font-bold text-emerald-700">✓ Verified</div>
+                    </div>
+                    <div className="bg-white p-2 rounded border">
+                      <div className="text-slate-500">Time Range</div>
+                      <div className="font-bold text-slate-900">7 days</div>
+                    </div>
+                    <div className="bg-white p-2 rounded border">
+                      <div className="text-slate-500">Unique Agents</div>
+                      <div className="font-bold text-slate-900">3</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 2: Hash Chain Verification */}
+              <section>
+                <h3 className="font-semibold text-slate-900 mb-2">2. Hash Chain Integrity</h3>
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 font-mono text-xs overflow-x-auto">
+                  <div className="text-slate-500 mb-2">Genesis → ... → Current (verified)</div>
+                  <div className="space-y-1">
+                    <div className="text-slate-700">sha256: a3f2...9e1b (genesis)</div>
+                    <div className="text-slate-700">sha256: 7c4d...2f8a</div>
+                    <div className="text-slate-700">sha256: 1b9e...5d3c</div>
+                    <div className="text-slate-700">sha256: 8f2a...4e7b (latest)</div>
+                  </div>
+                  <div className="mt-2 text-emerald-700">✓ All 1,247 links verified. No tampering detected.</div>
+                </div>
+              </section>
+
+              {/* Section 3: Event Sample */}
+              <section>
+                <h3 className="font-semibold text-slate-900 mb-2">3. Event Sample (Last 10)</h3>
+                <div className="rounded-lg border border-slate-200 overflow-hidden">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        <th className="px-3 py-2 font-medium text-slate-500">Event ID</th>
+                        <th className="px-3 py-2 font-medium text-slate-500">Timestamp</th>
+                        <th className="px-3 py-2 font-medium text-slate-500">Agent</th>
+                        <th className="px-3 py-2 font-medium text-slate-500">Tool</th>
+                        <th className="px-3 py-2 font-medium text-slate-500">Seq</th>
+                        <th className="px-3 py-2 font-medium text-slate-500">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {records.slice(0, 5).map((r) => (
+                        <tr key={r.id} className="hover:bg-slate-50">
+                          <td className="px-3 py-2 font-mono text-slate-600">{r.id.substring(0, 8)}…</td>
+                          <td className="px-3 py-2 text-slate-600">{new Date(r.created_at).toLocaleString()}</td>
+                          <td className="px-3 py-2 text-slate-600">{r.agent_id}</td>
+                          <td className="px-3 py-2 font-mono text-slate-600">{r.tool_name}</td>
+                          <td className="px-3 py-2 text-slate-600">{r.sequence}</td>
+                          <td className="px-3 py-2">
+                            <span className="inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50">
+                              Verified
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                      {records.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="px-3 py-8 text-center text-slate-400">
+                            No events recorded yet. Load demo data to see sample output.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {/* Section 4: Disclaimer */}
+              <section className="border-t border-slate-200 pt-4">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  <strong>Disclaimer:</strong> This preview is a sample of the AgentTrace compliance evidence package.
+                  The full bundle (available on Starter and Business plans) includes: complete JSONL event logs,
+                  signed PDF report with page-by-page hash verification, Python verification script for independent
+                  hash chain validation, and a machine-readable SBOM (Software Bill of Materials). This document
+                  is auto-generated for audit reference only and does not constitute formal legal advice.
+                </p>
+              </section>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

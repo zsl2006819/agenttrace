@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { CodeBlock } from '@/components/docs/code-block';
 import { Badge } from '@/components/ui/badge';
+import { MarkdownContent } from '@/components/docs/markdown-content';
+import { QuickstartTabs } from '@/components/docs/quickstart-tabs';
+import { ShieldCheck, Check, Copy, ExternalLink } from 'lucide-react';
 
 const TOC_LINKS = [
   { href: '#introduction', label: 'Introduction' },
@@ -18,23 +21,80 @@ const NAV_LINKS = [
   { href: '#api-reference', label: 'API Reference' },
 ];
 
+const INTRODUCTION_MD = `
+AgentTrace is compliance-grade audit infrastructure for AI agents. Every tool call,
+LLM invocation, and agent decision is recorded as an immutable event chained together
+with SHA-256. Any attempt to tamper with a record breaks the chain and is
+instantly detectable.
+
+Designed for teams deploying AI agents under regulatory frameworks such as the EU AI
+Act (Article 12), SOC 2, and ISO 42001 — without sacrificing developer velocity.
+
+### What you get
+
+- Immutable hash-chained audit events
+- Ed25519 digital signatures per event
+- Idempotent writes with deduplication keys
+- Multi-tenant isolation via Row Level Security
+- PDF / JSONL compliance reports
+`;
+
+const AUTHENTICATION_MD = `
+All requests to the AgentTrace audit API must be authenticated using an API Key. You
+can create a key from the [API Keys](/dashboard/api-keys) page in your dashboard.
+
+Include the key in the \`Authorization\` header as a Bearer token:
+
+> ⚠️ **Security Warning**: Never expose your API Key in client-side code or public repositories. Store it
+> securely and rotate it regularly from your dashboard.
+`;
+
+const SDK_INSTALLATION_MD = `
+Install the TypeScript SDK to record audit events with just a few lines of code.
+
+The SDK handles hash-chain computation, idempotency keys, and authenticated HTTP
+requests to \`/api/audit\`.
+`;
+
+const API_REFERENCE_MD = `
+### POST /api/audit
+
+Submit a new tamper-evident audit event. Requires a valid API Key in the
+\`Authorization: Bearer\` header.
+
+**URL**: \`https://agenttrace-eta.vercel.app/api/audit\`
+
+**Auth**: \`Authorization: Bearer <API_KEY>\`
+
+#### Request Body
+
+**Response (201)**
+
+<Badge>201</Badge> <Badge variant="outline">401</Badge> <Badge variant="outline">409</Badge>
+
+Successful response includes the inserted record with its chain hashes.
+
+- **401** — Invalid or missing API Key.
+- **409** — Idempotency key already exists; returns the existing record.
+`;
+
 export const dynamic = 'force-dynamic';
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <div className="min-h-screen bg-black text-white antialiased">
       {/* Header */}
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/60 sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-[1400px] mx-auto px-6 py-3 lg:px-8">
+      <header className="border-b border-zinc-800 bg-zinc-950/80 sticky top-0 z-40 backdrop-blur-md">
+        <div className="max-w-[1400px] mx-auto px-6 py-4 lg:px-8">
           <Link
             href="/"
             className="flex items-center gap-2"
             aria-label="AgentTrace home"
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-sm font-bold text-white shadow-sm dark:bg-white dark:text-zinc-900">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-black shadow-sm">
               AT
             </span>
-            <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            <span className="text-xl font-bold tracking-tight text-white">
               AgentTrace Docs
             </span>
           </Link>
@@ -48,17 +108,17 @@ export default function DocsPage() {
             className="lg:sticky lg:top-24 lg:w-[260px] lg:hidden flex-col space-y-6 mb-8 lg:mb-0"
           >
             <div className="mb-6 flex items-center gap-2">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-xs font-bold text-white">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white text-xs font-bold text-black">
                 AT
               </span>
-              <span className="font-semibold text-zinc-900 dark:text-white">Docs</span>
+              <span className="font-semibold text-white">Docs</span>
             </div>
             <nav className="space-y-1">
               {NAV_LINKS.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-zinc-500 rounded-lg hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-zinc-400 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors"
                 >
                   <span className="text-[10px] uppercase tracking-wider font-semibold opacity-60">
                     {item.label.split(' ')[0][0]}
@@ -70,210 +130,99 @@ export default function DocsPage() {
           </aside>
 
           {/* Main Content */}
-          <main className="min-w-0 max-w-2xl flex-1 lg:w-0 lg:flex-1">
-            <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">
-              Developer Documentation
-            </h1>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-10 leading-relaxed">
-              Build AI agents with tamper-evident audit trails. AgentTrace gives you immutable
-              hash chains, Ed25519 digital signatures, and compliance-ready reports for EU AI Act
-              Article 12, SOC 2, and ISO 42001.
-            </p>
+          <main className="min-w-0 max-w-3xl flex-1 lg:w-0 lg:flex-1">
+            <div className="mb-12">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
+                Developer Documentation
+              </h1>
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed max-w-2xl">
+                Build AI agents with tamper-evident audit trails. AgentTrace gives you immutable
+                hash chains, Ed25519 digital signatures, and compliance-ready reports for EU AI Act
+                Article 12, SOC 2, and ISO 42001.
+              </p>
+              <div className="flex items-center gap-4 text-sm text-zinc-500">
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                  Tamper-evident
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700">
+                  EU AI Act Ready
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700">
+                  TypeScript SDK
+                </span>
+              </div>
+            </div>
 
             {/* Introduction */}
-            <section id="introduction" className="mb-14">
-              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6">
+            <section id="introduction" className="mb-16">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 tracking-tight">
                 Introduction
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mb-6">
-                AgentTrace is compliance-grade audit infrastructure for AI agents. Every tool call,
-                LLM invocation, and agent decision is recorded as an immutable event chained together
-                with SHA-256. Any attempt to tamper with a record breaks the chain and is
-                instantly detectable.
-              </p>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mb-6">
-                Designed for teams deploying AI agents under regulatory frameworks such as the EU AI
-                Act (Article 12), SOC 2, and ISO 42001 — without sacrificing developer velocity.
-              </p>
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-5 mb-6">
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-1">
-                  What you get
-                </p>
-                <ul className="list-disc list-inside text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
-                  <li>Immutable hash-chained audit events</li>
-                  <li>Ed25519 digital signatures per event</li>
-                  <li>Idempotent writes with deduplication keys</li>
-                  <li>Multi-tenant isolation via Row Level Security</li>
-                  <li>PDF / JSONL compliance reports</li>
-                </ul>
-              </div>
+              <MarkdownContent content={INTRODUCTION_MD} />
             </section>
 
             {/* Authentication */}
-            <section id="authentication" className="mb-14">
-              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6">
+            <section id="authentication" className="mb-16">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 tracking-tight">
                 Authentication
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mb-6">
-                All requests to the AgentTrace audit API must be authenticated using an API Key. You
-                can create a key from the <Link href="/dashboard/api-keys" className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-white">API Keys</Link> page in your dashboard.
-              </p>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mb-6">
-                Include the key in the <code className="font-mono text-sm bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-900 dark:text-white">Authorization</code> header as a Bearer token:
-              </p>
-              <CodeBlock
-                language="bash"
-                code={`curl -X POST https://agenttrace-eta.vercel.app/api/audit \\
+              <MarkdownContent content={AUTHENTICATION_MD} />
+              <div className="relative group">
+                <CodeBlock
+                  language="bash"
+                  code={`curl -X POST https://agenttrace-eta.vercel.app/api/audit \\
   -H "Authorization: Bearer at_live_8f203c6522f081c82d5c9b2a2d2e4d1814cd58f7fc5c818a" \\
   -H "Content-Type: application/json" \\
   -d '{"agent_id":"agent-001","session_id":"sess-001","sequence":1,...}'`}
-              />
-              <div className="rounded-lg border-l-2 border-red-500 bg-red-50 p-4 dark:border-red-500 dark:bg-red-950/20 mb-6">
-                <p className="text-sm font-medium text-red-800 dark:text-red-400">
-                  Never expose your API Key in client-side code or public repositories. Store it
-                  securely and rotate it regularly from your dashboard.
-                </p>
+                />
               </div>
             </section>
 
             {/* SDK Installation */}
-            <section id="sdk-installation" className="mb-14">
-              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6">
+            <section id="sdk-installation" className="mb-16">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 tracking-tight">
                 SDK Installation
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mb-6">
-                Install the TypeScript SDK to record audit events with just a few lines of code.
-              </p>
-              <CodeBlock language="bash" code="npm install @agenttrace/sdk" />
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mt-6">
+              <MarkdownContent content={SDK_INSTALLATION_MD} />
+              <div className="relative group">
+                <CodeBlock language="bash" code="npm install @agenttrace/sdk" />
+              </div>
+              <p className="mt-6 text-zinc-400 leading-7">
                 The SDK handles hash-chain computation, idempotency keys, and authenticated HTTP
-                requests to <code className="font-mono text-sm bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-900 dark:text-white">/api/audit</code>.
+                requests to <code className="font-mono text-sm bg-zinc-800 px-1.5 py-0.5 rounded text-white">/api/audit</code>.
               </p>
             </section>
 
             {/* Quickstart */}
-            <section id="quickstart" className="mb-14">
-              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6">
+            <section id="quickstart" className="mb-16">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 tracking-tight">
                 Quickstart
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-7 mb-6">
+              <p className="text-zinc-400 leading-7 mb-8">
                 Record your first audit event in under a minute. Choose your preferred language
                 below.
               </p>
-
-              {/* Tabs */}
-              <div className="flex items-center gap-2 mb-8 border-b border-zinc-200 dark:border-zinc-800">
-                <button
-                  className="border-b-2 border-zinc-900 px-4 py-2 text-sm font-medium text-zinc-900 dark:border-zinc-100 dark:text-zinc-100"
-                  aria-pressed="true"
-                >
-                  Node.js
-                </button>
-                <button
-                  className="px-4 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
-                >
-                  cURL
-                </button>
-              </div>
-
-              <div className="space-y-8">
-                {/* Node.js tab */}
-                <div>
-                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-                    Record an agent tool call
-                  </h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 mb-6 text-sm leading-relaxed">
-                    Wrap any async agent function with <code className="font-mono text-sm bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-900 dark:text-white">AuditRecorder.wrap</code>.
-                    The SDK computes input/output hashes and chains them automatically.
-                  </p>
-                  <CodeBlock
-                    language="typescript"
-                    code={`import { AuditRecorder } from '@agenttrace/sdk';
-
-const recorder = new AuditRecorder({
-  apiKey: process.env.AGENTTRACE_API_KEY!,
-  agentId: 'weather-agent',
-  sessionId: 'session-001',
-});
-
-const result = await recorder.wrap(
-  'get_weather',
-  { city: 'Paris' },
-  async (args) => {
-    // Your existing agent logic
-    return { temperature: 22, condition: 'sunny', unit: 'celsius' };
-  }
-);
-
-console.log(result);`} />
-                </div>
-
-                {/* cURL tab */}
-                <div className="hidden">
-                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-                    Send an audit event via cURL
-                  </h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 mb-6 text-sm leading-relaxed">
-                    POST directly to the audit API. You must compute and chain the hashes yourself
-                    when not using the SDK.
-                  </p>
-                  <CodeBlock
-                    language="bash"
-                    code={`curl -X POST https://agenttrace-eta.vercel.app/api/audit \\
-  -H "Authorization: Bearer at_live_YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "agent_id": "weather-agent",
-    "session_id": "session-001",
-    "sequence": 1,
-    "idempotency_key": "unique-idempotency-key",
-    "tool_name": "get_weather",
-    "input_hash": "sha256-of-input",
-    "output_hash": "sha256-of-output",
-    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-    "current_hash": "sha256-of-full-record"
-  }'`} />
-                </div>
-              </div>
+              <QuickstartTabs />
             </section>
 
             {/* API Reference */}
-            <section id="api-reference" className="mb-14">
-              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-6">
+            <section id="api-reference" className="mb-16">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 tracking-tight">
                 API Reference
               </h2>
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden mb-8">
-                <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex items-center gap-2">
-                  <Badge variant="default" className="bg-zinc-900 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white dark:bg-zinc-100 dark:text-zinc-900">
+              <MarkdownContent content={API_REFERENCE_MD} />
+
+              <div className="rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden mb-8">
+                <div className="px-4 py-3 border-b border-zinc-800 bg-zinc-900/50 flex items-center gap-2">
+                  <Badge variant="default" className="bg-white px-2 py-0.5 text-[10px] uppercase tracking-wider text-black">
                     POST
                   </Badge>
-                  <span className="font-mono text-sm text-zinc-500 dark:text-zinc-400">
+                  <span className="font-mono text-sm text-zinc-400">
                     /api/audit
                   </span>
                 </div>
                 <div className="p-6">
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
-                    Submit a new tamper-evident audit event. Requires a valid API Key in the
-                    <code className="font-mono text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-900 dark:text-white">Authorization: Bearer</code> header.
-                  </p>
-                  <div className="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-white mb-2">URL</h4>
-                      <p className="break-all font-mono text-xs text-zinc-900 dark:text-zinc-200">
-                        https://agenttrace-eta.vercel.app/api/audit
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-white mb-2">Auth</h4>
-                      <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 break-all">
-                        Authorization: Bearer &lt;API_KEY&gt;
-                      </p>
-                    </div>
-                  </div>
-
-                  <h4 className="text-sm font-semibold text-zinc-900 dark:text-white mb-3">
-                    Request Body
-                  </h4>
                   <CodeBlock
                     language="json"
                     code={`{
@@ -290,26 +239,24 @@ console.log(result);`} />
   "current_hash": "sha256-hex-string",
   "signature": null,
   "key_id": null
-}`} />
+}`}
+                  />
                 </div>
               </div>
 
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
-                <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 flex items-center gap-2">
-                  <Badge variant="outline" className="border-zinc-700 text-zinc-500 px-2 py-0.5 text-[10px] uppercase tracking-wider">
+              <div className="rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800 bg-zinc-900/50 flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className="border-zinc-600 text-zinc-400 px-2 py-0.5 text-[10px] uppercase tracking-wider">
                     201
                   </Badge>
-                  <Badge variant="outline" className="border-zinc-700 text-zinc-500 px-2 py-0.5 text-[10px] uppercase tracking-wider">
+                  <Badge variant="outline" className="border-zinc-600 text-zinc-400 px-2 py-0.5 text-[10px] uppercase tracking-wider">
                     401
                   </Badge>
-                  <Badge variant="outline" className="border-zinc-700 text-zinc-500 px-2 py-0.5 text-[10px] uppercase tracking-wider">
+                  <Badge variant="outline" className="border-zinc-600 text-zinc-400 px-2 py-0.5 text-[10px] uppercase tracking-wider">
                     409
                   </Badge>
                 </div>
                 <div className="p-6">
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
-                    Successful response includes the inserted record with its chain hashes.
-                  </p>
                   <CodeBlock
                     language="json"
                     code={`{
@@ -332,17 +279,14 @@ console.log(result);`} />
     "key_id": "a7f8a0cf-08f3-4587-99bb-73b27cfd850f",
     "created_at": "2026-11-17T01:50:08.046001+00:00"
   }
-}`} />
-                  <div className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-                    <p><strong>401</strong> — Invalid or missing API Key.</p>
-                    <p><strong>409</strong> — Idempotency key already exists; returns the existing record.</p>
-                  </div>
+}`}
+                  />
                 </div>
               </div>
             </section>
 
             {/* Footer disclaimer */}
-            <p className="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-400 text-center">
+            <p className="mt-16 pt-8 border-t border-zinc-800 text-xs text-zinc-500 text-center">
               AgentTrace provides technical infrastructure only and does not constitute formal legal advice.
             </p>
           </main>
@@ -352,12 +296,12 @@ console.log(result);`} />
             <div className="mb-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
               On this page
             </div>
-            <nav className="space-y-2">
+            <nav className="space-y-1">
               {TOC_LINKS.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="block px-3 py-1.5 text-sm text-zinc-500 rounded-lg hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
+                  className="block px-3 py-1.5 text-sm text-zinc-400 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors"
                 >
                   {item.label}
                 </Link>
