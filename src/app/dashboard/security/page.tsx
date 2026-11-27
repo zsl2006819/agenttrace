@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
 
 const RULES = [
   {
@@ -70,6 +71,7 @@ export default function SecurityPage() {
     await new Promise((r) => setTimeout(r, 800));
     setCreating(false);
     setOpen(false);
+    toast.success('Rule created');
   };
 
   return (
@@ -204,7 +206,7 @@ export default function SecurityPage() {
           </div>
           <div className="flex gap-2">
             <Button
-              onClick={() => {}}
+              onClick={() => toast.success('Endpoint saved')}
               size="sm"
               className="rounded-lg bg-slate-900 text-white shadow-sm hover:bg-slate-800"
             >

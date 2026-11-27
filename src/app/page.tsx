@@ -1,5 +1,15 @@
 import Link from 'next/link';
 import { PricingCheckoutButton } from '@/components/pricing-checkout-button';
+import { ThemeToggle } from '@/components/theme-toggle';
+
+const ENTERPRISE_LOGOS = [
+  { name: 'TechCorp', color: 'text-zinc-400 dark:text-zinc-500' },
+  { name: 'AILabs', color: 'text-zinc-400 dark:text-zinc-500' },
+  { name: 'NovaLabs', color: 'text-zinc-400 dark:text-zinc-500' },
+  { name: 'QuantumAI', color: 'text-zinc-400 dark:text-zinc-500' },
+  { name: 'Vertex', color: 'text-zinc-400 dark:text-zinc-500' },
+  { name: 'Orbit', color: 'text-zinc-400 dark:text-zinc-500' },
+];
 
 export default function Home() {
   return (
@@ -9,10 +19,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-bold text-zinc-900 dark:text-white">
+              <Link href="/" className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">
                 AgentTrace
               </Link>
-              <div className="hidden md:flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-400">
+              <div className="hidden md:flex items-center gap-8 text-sm text-zinc-600 dark:text-zinc-400 font-medium">
                 <Link href="#features" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
                   Features
                 </Link>
@@ -28,6 +38,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <a
                 href="https://github.com/zsl2006819/agenttrace"
                 target="_blank"
@@ -51,7 +62,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-24 pb-20 sm:pt-32 lg:pt-40">
+      <section className="relative overflow-hidden pt-28 pb-28 sm:pt-36 lg:pt-44">
         {/* Backdrop: soft gradient + engineering grid + halo */}
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-zinc-50 via-white to-white dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-950" />
@@ -61,7 +72,7 @@ export default function Home() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-4 py-1.5 text-sm font-medium text-zinc-600 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-300">
+            <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-4 py-1.5 text-sm font-medium text-zinc-600 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-300">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-zinc-400 opacity-75"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-zinc-900 dark:bg-zinc-100"></span>
@@ -69,7 +80,7 @@ export default function Home() {
               EU AI Act Article 12 Compliant
             </div>
 
-            <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl xl:text-7xl dark:text-white">
+            <h1 className="mb-8 text-4xl font-bold leading-tight tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl xl:text-7xl dark:text-white">
               Tamper-evident Audit Trails
               <br />
               <span className="bg-gradient-to-r from-zinc-500 via-zinc-700 to-zinc-500 bg-clip-text text-transparent dark:from-zinc-400 dark:via-zinc-200 dark:to-zinc-400">
@@ -77,7 +88,7 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-600 sm:text-xl dark:text-zinc-400">
+            <p className="mx-auto mb-14 max-w-2xl text-lg leading-relaxed text-zinc-600 sm:text-xl dark:text-zinc-400">
               From passive logging to active defense. The operating system for compliant AI agents.
             </p>
 
@@ -97,10 +108,24 @@ export default function Home() {
                 View on GitHub
               </a>
             </div>
+
+            {/* Enterprise Logo Wall */}
+            <div className="mt-16 pt-12 border-t border-zinc-200 dark:border-zinc-800">
+              <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+                Trusted by innovative teams
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-10 sm:gap-16 opacity-50 hover:opacity-100 transition-opacity duration-300">
+                {ENTERPRISE_LOGOS.map((logo) => (
+                  <span key={logo.name} className={`text-sm font-medium ${logo.color} select-none`}>
+                    {logo.name}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Abstract data flow */}
-          <div className="relative mx-auto mt-20 max-w-5xl sm:mt-24">
+          <div className="relative mx-auto mt-24 max-w-5xl sm:mt-28">
             {/* Background grid */}
             <div
               aria-hidden
@@ -148,7 +173,7 @@ export default function Home() {
           </div>
 
           {/* Trust indicators */}
-          <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500 dark:text-zinc-500">
+          <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500 dark:text-zinc-500">
             <div className="flex items-center gap-1.5">
               <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -172,9 +197,9 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 sm:py-24 lg:py-32 bg-white dark:bg-zinc-950">
+      <section id="features" className="py-24 sm:py-28 lg:py-36 bg-white dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white mb-4">
               Why AgentTrace?
             </h2>
@@ -272,9 +297,9 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 sm:py-24 lg:py-32 bg-zinc-50 dark:bg-zinc-900">
+      <section id="pricing" className="py-24 sm:py-28 lg:py-36 bg-zinc-50 dark:bg-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white mb-4">
               Simple, Transparent Pricing
             </h2>
@@ -283,9 +308,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {/* Free Plan */}
-            <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col">
               <div className="text-center mb-8">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-2">Free</h3>
                 <div className="flex items-baseline justify-center gap-1 mb-2">
@@ -294,7 +319,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">For individual developers & prototypes</p>
               </div>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400">
                   <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   10,000 events/month
@@ -321,7 +346,7 @@ export default function Home() {
             </div>
 
             {/* Starter Plan */}
-            <div className="relative p-8 rounded-2xl border-2 border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 shadow-sm">
+            <div className="relative p-8 rounded-2xl border-2 border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 shadow-sm flex flex-col">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold rounded-full">
                 Most Popular
               </div>
@@ -333,7 +358,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">For small teams deploying AI agents</p>
               </div>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400">
                   <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   500,000 events/month
@@ -364,7 +389,7 @@ export default function Home() {
             </div>
 
             {/* Business Plan */}
-            <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col">
               <div className="text-center mb-8">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-2">Business</h3>
                 <div className="flex items-baseline justify-center gap-1 mb-2">
@@ -373,7 +398,7 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">For scaling companies with compliance needs</p>
               </div>
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-center gap-3 text-zinc-600 dark:text-zinc-400">
                   <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                   Unlimited events
@@ -406,12 +431,65 @@ export default function Home() {
                 Get Started
               </PricingCheckoutButton>
             </div>
+
+            {/* Enterprise Plan */}
+            <div className="relative p-8 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 flex flex-col overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-transparent" />
+              <div className="relative text-center mb-8">
+                <h3 className="text-xl font-semibold mb-2">Enterprise</h3>
+                <div className="flex items-baseline justify-center gap-1 mb-2">
+                  <span className="text-4xl font-bold">Custom</span>
+                  <span className="text-zinc-400">/month</span>
+                </div>
+                <p className="text-sm text-zinc-400">For organizations with advanced requirements</p>
+              </div>
+              <ul className="space-y-4 mb-8 flex-1">
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Unlimited events
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  On-premise / VPC deployment
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Custom SLAs & contracts
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Dedicated Slack channel
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  SSO / SAML / OIDC included
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Audit log API access
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Unlimited team members
+                </li>
+                <li className="flex items-center gap-3 text-zinc-300">
+                  <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Custom retention & compliance
+                </li>
+              </ul>
+              <a
+                href="mailto:enterprise@agenttrace.ai?subject=Enterprise%20Inquiry"
+                className="w-full px-4 py-3 text-sm font-semibold text-slate-900 bg-white rounded-xl hover:bg-zinc-100 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-center shadow-sm block"
+              >
+                Contact Sales
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 sm:py-24 lg:py-32 bg-zinc-900 dark:bg-zinc-950">
+      <section className="py-24 sm:py-28 lg:py-36 bg-zinc-900 dark:bg-zinc-950">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Ready to deploy compliant AI agents?

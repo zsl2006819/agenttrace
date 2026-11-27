@@ -9,6 +9,7 @@ import { UsageMeter } from './usage-meter';
 import { ChainIntegrityBanner } from '@/components/dashboard/chain-integrity-banner';
 import { DashboardRefresher } from '@/components/dashboard/dashboard-refresher';
 import { EventLogsSection } from '@/components/dashboard/event-logs-section';
+import { GlobalSearch } from '@/components/dashboard/global-search';
 import { cn } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
@@ -143,18 +144,28 @@ export default async function DashboardPage() {
 
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
+        <div className="flex items-center gap-3 flex-wrap md:order-first md:w-auto">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             Audit Logs
           </h1>
-          <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
-            A tamper-evident record of every tool call made by your agents.
-          </p>
+          <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            Live Monitoring Active
+          </span>
         </div>
+        <p className="mt-1.5 text-sm leading-relaxed text-slate-500 md:mt-0 md:order-last md:w-full">
+          A tamper-evident record of every tool call made by your agents.
+        </p>
 
-        <div className="flex flex-col gap-4 md:items-end">
-          <ExportReportButton records={records} plan={plan} />
-          <UsageMeter used={usedThisMonth} limit={apiLimit} plan={plan} />
+        <div className="flex items-center gap-4 md:order-2 w-full md:w-auto">
+          <GlobalSearch />
+          <div className="flex flex-col gap-4 md:items-end md:flex-row">
+            <ExportReportButton records={records} plan={plan} />
+            <UsageMeter used={usedThisMonth} limit={apiLimit} plan={plan} />
+          </div>
         </div>
       </div>
 

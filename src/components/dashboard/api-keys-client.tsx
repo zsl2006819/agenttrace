@@ -5,6 +5,7 @@ import { KeyRound, Plus, Trash, CircleAlert, LoaderCircle, Plug } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/copy-button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export interface ApiKeyRow {
   id: string;
@@ -62,6 +63,7 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
       if (!res.ok) throw new Error(data.error || 'Failed to generate key');
       setRevealedKey(data.key as string);
       setKeys((prev) => [data.record as ApiKeyRow, ...prev]);
+      toast.success('API key generated');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to generate key');
     } finally {
@@ -81,6 +83,7 @@ export function ApiKeysClient({ initialKeys }: { initialKeys: ApiKeyRow[] }) {
         throw new Error(data.error || 'Failed to revoke key');
       }
       setKeys((prev) => prev.filter((k) => k.id !== id));
+      toast.success('API key revoked');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to revoke key');
     } finally {

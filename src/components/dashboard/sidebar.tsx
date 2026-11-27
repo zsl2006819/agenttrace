@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Audit Logs', icon: ScrollText },
@@ -111,6 +112,12 @@ export function DashboardSidebar({ email }: { email: string | null }) {
                 </Link>
               );
             })}
+
+            {!collapsed && (
+              <div className="pt-2">
+                <ThemeToggle />
+              </div>
+            )}
 
             <form action="/auth/signout" method="POST">
               <button

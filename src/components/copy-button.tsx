@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface CopyButtonProps {
   value: string;
@@ -26,9 +27,10 @@ export function CopyButton({
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
+      toast.success('Copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // 剪贴板不可用时静默失败
+      // Clipboard unavailable - silent fail
     }
   };
 
